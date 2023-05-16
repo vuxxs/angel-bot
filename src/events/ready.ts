@@ -1,10 +1,11 @@
-import { ActivityType, Client } from "discord.js";
+import { ActivityType } from "discord.js";
+import { CustomClient } from "../interfaces/client.interface";
 
-export default (client: Client): void => {
+export default (client: CustomClient): void => {
   client.on("ready", async () => {
     client.user?.setActivity({
       type: ActivityType.Watching,
-      name: `$help`,
+      name: `${client.options.prefix}help`,
     });
     console.log(`${client.user!.username} is online`);
   });

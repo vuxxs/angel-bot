@@ -1,4 +1,8 @@
 import { Client } from "discord.js";
+import {
+  CustomClient,
+  CustomClientOptions,
+} from "./interfaces/client.interface";
 import guildCreate from "./events/guildCreate";
 import guildDelete from "./events/guildDelete";
 import messageCreate from "./events/messageCreate";
@@ -7,7 +11,8 @@ require("dotenv").config();
 
 console.log("Bot is starting...");
 
-const client = new Client({
+const options: CustomClientOptions = {
+  prefix: "$",
   intents: [
     "DirectMessageReactions",
     "DirectMessageTyping",
@@ -27,7 +32,9 @@ const client = new Client({
     "Guilds",
     "MessageContent",
   ],
-});
+};
+
+const client = new Client(options) as CustomClient;
 
 // Run events
 ready(client);
