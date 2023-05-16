@@ -1,6 +1,6 @@
-import { Client } from "discord.js";
+import { CustomClient } from "../interfaces/client.interface";
 
-export default (client: Client): void => {
+export default (client: CustomClient): void => {
   client.on("guildCreate", async (guild) => {
     console.log(`Joined Guild: ${guild.name} ID: ${guild.id}`);
   });
