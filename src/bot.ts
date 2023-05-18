@@ -9,7 +9,6 @@ import messageCreate from "./events/messageCreate";
 import ready from "./events/ready";
 import { readDirArray } from "./utilities/readDirectory";
 import { join } from "path";
-import { Command } from "./interfaces/command.interface";
 import { LogLevel, angelogger } from "./utilities/logger";
 require("dotenv").config();
 
@@ -45,17 +44,21 @@ client.commands = new Map();
 
 const commandFiles = readDirArray(join(__dirname, "commands"));
 
-for (const file of commandFiles) {
-  const command = require(join(__dirname, "commands", file));
-  client.commands.set(command.default.name, command.default);
+// Run even if the directory isn't found
+if (commandFiles) {
+  for (const file of commandFiles) {
+    const command = require(join(__dirname, "commands", file));
+    client.commands.set(command.default.name, command.default);
+  }
 }
+
+if (client.commands.size === 0)
+  angelogger(LogLevel.WARN, "No client commands were defined.");
 
 // Run events
 ready(client);
 messageCreate(client);
 guildCreate(client);
 guildDelete(client);
-
-angelogger(LogLevel.INFO, "Ran all events"); // inaccurate, make it async
 
 client.login(process.env.TOKEN);
