@@ -46,7 +46,7 @@ const commandFiles = readDirArray(join(__dirname, "commands"));
 
 for (const file of commandFiles) {
   const command = require(join(__dirname, "commands", file));
-  client.commands.set(command.name, command);
+  client.commands.set(command.default.name, command.default);
 }
 
 // Run events
