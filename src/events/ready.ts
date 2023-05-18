@@ -1,5 +1,6 @@
 import { ActivityType } from "discord.js";
 import { CustomClient } from "../interfaces/client.interface";
+import { LogLevel, angelogger } from "../utilities/logger";
 
 export default (client: CustomClient): void => {
   client.on("ready", async () => {
@@ -7,6 +8,6 @@ export default (client: CustomClient): void => {
       type: ActivityType.Watching,
       name: `${client.options.prefix}help`,
     });
-    console.log(`${client.user!.username} is online`);
+    angelogger(LogLevel.INFO, `${client.user!.username} is online`);
   });
 };

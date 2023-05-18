@@ -10,9 +10,10 @@ import ready from "./events/ready";
 import { readDirArray } from "./utilities/readDirectory";
 import { join } from "path";
 import { Command } from "./interfaces/command.interface";
+import { LogLevel, angelogger } from "./utilities/logger";
 require("dotenv").config();
 
-console.log("Bot is starting...");
+angelogger(LogLevel.INFO, "Bot is starting...");
 
 const options: CustomClientOptions = {
   prefix: "$",
@@ -55,6 +56,6 @@ messageCreate(client);
 guildCreate(client);
 guildDelete(client);
 
-console.log("Ran all events"); // inaccurate, make it async
+angelogger(LogLevel.INFO, "Ran all events"); // inaccurate, make it async
 
 client.login(process.env.TOKEN);

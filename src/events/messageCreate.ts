@@ -1,5 +1,6 @@
 import { ChannelType } from "discord.js";
 import { CustomClient } from "../interfaces/client.interface";
+import { LogLevel, angelogger } from "../utilities/logger";
 
 export default (client: CustomClient): void => {
   client.on("messageCreate", async (message) => {
@@ -26,7 +27,10 @@ export default (client: CustomClient): void => {
     try {
       await command.execute(undefined, message);
     } catch (err) {
-      console.error(`Error executing command "${commandName}":`, err);
+      angelogger(
+        LogLevel.ERROR,
+        `Error executing command "${commandName}": ${err}`
+      );
       message.channel.send("An error occured while executing the command.");
     }
   });
