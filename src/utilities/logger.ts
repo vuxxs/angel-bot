@@ -2,6 +2,7 @@ enum LogLevel {
   INFO = "INFO",
   WARN = "WARN",
   ERROR = "ERROR",
+  DEBUG = "DEBUG",
 }
 
 function log(level: LogLevel, message: string): void {
