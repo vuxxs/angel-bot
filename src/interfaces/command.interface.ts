@@ -10,6 +10,7 @@ export interface Command {
   options?: ApplicationCommandOptionData[];
   execute: (
     interaction?: CommandInteraction,
-    message?: Message
+    message?: Message,
+    args?: String[]
   ) => Promise<void>;
 }

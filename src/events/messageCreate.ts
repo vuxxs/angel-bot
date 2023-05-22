@@ -18,6 +18,7 @@ export default (client: CustomClient): void => {
       .slice(client.options.prefix.length)
       .trim()
       .split(/ +/);
+
     const commandName = args.shift()?.toLowerCase();
 
     const command = client.commands.get(commandName!);
@@ -25,7 +26,7 @@ export default (client: CustomClient): void => {
     if (!command) return;
 
     try {
-      await command.execute(undefined, message);
+      await command.execute(undefined, message, args);
     } catch (err) {
       angelogger(
         LogLevel.ERROR,
