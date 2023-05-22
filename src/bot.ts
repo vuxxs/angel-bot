@@ -9,6 +9,7 @@ import messageCreate from "./events/messageCreate";
 import ready from "./events/ready";
 import { LogLevel, angelogger } from "./utilities/logger";
 import { registerCommands } from "./utilities/registerCommands";
+import interactionCreate from "./events/interactionCreate";
 require("dotenv").config();
 
 angelogger(LogLevel.INFO, "Bot is starting...");
@@ -49,5 +50,6 @@ ready(client);
 messageCreate(client);
 guildCreate(client);
 guildDelete(client);
+interactionCreate(client);
 
 client.login(process.env.TOKEN);
