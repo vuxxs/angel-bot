@@ -12,6 +12,8 @@ import { registerCommands } from "./utilities/registerCommands";
 import interactionCreate from "./events/interactionCreate";
 import guildMemberAdd from "./events/guildMemberAdd";
 import guildMemberRemove from "./events/guildMemberRemove";
+import { readDirArray } from "./utilities/readDirectory";
+import { join } from "path";
 require("dotenv").config();
 
 angelogger(LogLevel.INFO, "Bot is starting...");
@@ -48,12 +50,15 @@ if (client.commands.size === 0)
   angelogger(LogLevel.WARN, "No client commands were defined.");
 
 // Run events
-ready(client);
-interactionCreate(client);
-messageCreate(client);
-guildCreate(client);
-guildDelete(client);
-guildMemberAdd(client);
-guildMemberRemove(client);
+const events = readDirArray(join(__dirname, "events"));
 
+if (events) {
+  events.forEach((file) => {
+    const event = require(join(__dirname, "events", file));
+    console.log(event);
+    event.default(client);
+  });
+} else {
+  angelogger(LogLevel.ERROR, "No events were defined.");
+}
 client.login(process.env.TOKEN);
