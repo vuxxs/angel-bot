@@ -13,6 +13,6 @@ export interface Command {
   execute: (
     interaction?: CommandInteraction,
     message?: Message,
-    args?: String[]
+    args?: string[]
   ) => Promise<void>;
 }
