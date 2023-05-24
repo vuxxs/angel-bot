@@ -5,11 +5,10 @@ import {
   Message,
 } from "discord.js";
 import { Command } from "../interfaces/command.interface";
-import { LogLevel, angelogger } from "../utilities/logger";
 import { filterUserId } from "../utilities/filterUserId";
 
 export default {
-  name: "kick",
+  name: "kickuser",
   description: "Kick a member from the server",
   permissions: ["KickMembers"],
   options: [
