@@ -1,13 +1,11 @@
 import {
   ApplicationCommandOptionType,
-  Channel,
   ChannelType,
   CommandInteraction,
   GuildMember,
   Message,
 } from "discord.js";
 import { Command } from "../interfaces/command.interface";
-import { LogLevel, angelogger } from "../utilities/logger";
 
 export default {
   name: "purge",
