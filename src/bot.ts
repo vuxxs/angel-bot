@@ -55,7 +55,6 @@ const events = readDirArray(join(__dirname, "events"));
 if (events) {
   events.forEach((file) => {
     const event = require(join(__dirname, "events", file));
-    console.log(event);
     event.default(client);
   });
 } else {
