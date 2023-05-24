@@ -10,7 +10,7 @@ import { filterUserId } from "../utilities/filterUserId";
 export default {
   name: "banuser",
   description: "Ban a member from the server",
-  permissions: ["BanMembers"], // Add required permissions here
+  permissions: ["BanMembers"],
   options: [
     {
       name: "target",

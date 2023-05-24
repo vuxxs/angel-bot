@@ -10,8 +10,6 @@ export default (client: CustomClient): void => {
       !client.commands
     )
       return;
-
-    // This is where the magic happens
     if (!message.content.startsWith(client.options.prefix)) return;
 
     const args = message.content

@@ -1,6 +1,5 @@
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
-import { Command } from "../interfaces/command.interface";
 import { CustomClient } from "../interfaces/client.interface";
 import { ApplicationCommandType } from "discord.js";
 import { readDirArray } from "./readDirectory";
