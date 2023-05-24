@@ -21,7 +21,7 @@ export default {
   async execute(
     interaction?: CommandInteraction,
     message?: Message,
-    args?: String[]
+    args?: string[]
   ) {
     let member;
     let user;
