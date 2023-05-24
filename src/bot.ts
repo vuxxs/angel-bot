@@ -3,15 +3,8 @@ import {
   CustomClient,
   CustomClientOptions,
 } from "./interfaces/client.interface";
-import guildCreate from "./events/guildCreate";
-import guildDelete from "./events/guildDelete";
-import messageCreate from "./events/messageCreate";
-import ready from "./events/ready";
 import { LogLevel, angelogger } from "./utilities/logger";
 import { registerCommands } from "./utilities/registerCommands";
-import interactionCreate from "./events/interactionCreate";
-import guildMemberAdd from "./events/guildMemberAdd";
-import guildMemberRemove from "./events/guildMemberRemove";
 import { readDirArray } from "./utilities/readDirectory";
 import { join } from "path";
 require("dotenv").config();
