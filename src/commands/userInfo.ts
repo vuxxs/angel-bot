@@ -6,6 +6,7 @@ import {
 } from "discord.js";
 import { Command } from "../interfaces/command.interface";
 import { filterUserId } from "../utilities/filterUserId";
+import { sendMessage } from "../utilities/sendMessage";
 
 export default {
   name: "userinfo",
@@ -23,20 +24,16 @@ export default {
     message?: Message,
     args?: string[]
   ) {
-    let member;
-    let user;
-    if (interaction) {
-      user = interaction.options.getUser("target") || interaction.user; // Get the target user, default to command user
-      member = interaction.guild?.members.cache.get(user.id)!;
-    } else if (message) {
-      user = message!.author;
-      if (args && args.length > 0)
-        user = message.guild?.members.cache.get(filterUserId(args[0]))?.user;
-      if (!user) return;
-      member = message.guild?.members.cache.get(user.id);
-    } else {
-      return;
-    }
+    if (!args) args = [];
+    const user =
+      interaction?.options.getUser("target") ||
+      interaction?.user ||
+      message?.guild?.members.cache.get(filterUserId(args[0]))?.user ||
+      message?.author;
+    if (!user) return;
+    const member =
+      interaction?.guild?.members.cache.get(user.id)! ||
+      message?.guild?.members.cache.get(user.id);
 
     if (!member) return;
 
@@ -64,7 +61,6 @@ export default {
       )
       .setThumbnail(user.avatarURL() || null);
 
-    if (interaction) await interaction.reply({ embeds: [embed] });
-    if (message) await message.channel.send({ embeds: [embed] });
+    sendMessage(message, interaction, { embeds: [embed] });
   },
 } as Command;
