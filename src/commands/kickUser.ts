@@ -6,6 +6,7 @@ import {
 } from "discord.js";
 import { Command } from "../interfaces/command.interface";
 import { filterUserId } from "../utilities/filterUserId";
+import { sendMessage } from "../utilities/sendMessage";
 
 export default {
   name: "kickuser",
@@ -30,66 +31,47 @@ export default {
     message?: Message,
     args?: string[]
   ) {
-    if (interaction) {
-      if (!(interaction.member instanceof GuildMember)) return; // Interaction is in DM, return
-      if (!interaction.member?.permissions.has("KickMembers")) {
-        interaction.reply(
-          "You do not have the necessary permissions to use this command."
-        );
-        return;
-      }
-      const targetUser = interaction.options.getUser("target");
-      const reason =
-        (interaction.options.get("reason")?.value as string) ||
-        "No reason provided";
-
-      if (!targetUser) return;
-
-      const member = interaction.guild?.members.cache.get(targetUser.id);
-
-      if (!member) {
-        await interaction.reply("User not found");
-        return;
-      }
-
-      try {
-        await member.kick(reason);
-        await interaction.reply(
-          `${targetUser.tag} has been kicked for reason: ${reason}`
-        );
-      } catch (error) {
-        await interaction.reply(
-          "Can't kick this member, they might have a role higher than mine"
-        );
-      }
-    } else if (message) {
-      if (!(message.member instanceof GuildMember)) return; // Interaction is in DM, return
-      const channel = message.channel;
-      if (!message.member.permissions.has("KickMembers")) {
-        channel.send(
-          "You do not have the necessary permissions to use this command."
-        );
-        return;
-      }
-      const targetUser = message.guild!.members.cache.get(
-        filterUserId(args![0])
+    if (!args) args = [];
+    const member = interaction?.member || message?.member;
+    if (!(member instanceof GuildMember)) return; // Interaction is in DM, return
+    if (!member?.permissions.has("KickMembers")) {
+      sendMessage(
+        message,
+        interaction,
+        "You do not have the necessary permissions to use this command."
       );
-      const reason = args![1] || "No reason provided";
+      return;
+    }
+    const targetUser =
+      interaction?.options.getUser("target") ||
+      message?.guild!.members.cache.get(filterUserId(args[0]))?.user;
+    const reason =
+      (interaction?.options.get("reason")?.value as string) ||
+      args[1] ||
+      "No reason provided";
 
-      if (!targetUser?.user) {
-        await channel.send("User not found");
-        return;
-      }
-      try {
-        await targetUser.kick(reason);
-        await channel.send(
-          `${targetUser.user.tag} has been kicked for reason: ${reason}`
-        );
-      } catch (error) {
-        await channel.send(
-          "Can't kick this member, they might have a role higher than mine"
-        );
-      }
+    if (!targetUser) return;
+
+    const targetMember = member.guild?.members.cache.get(targetUser.id);
+
+    if (!targetMember) {
+      sendMessage(message, interaction, "User not found");
+      return;
+    }
+
+    try {
+      await member.kick(reason);
+      sendMessage(
+        message,
+        interaction,
+        `${targetUser.tag} has been kicked for reason: ${reason}`
+      );
+    } catch (error) {
+      sendMessage(
+        message,
+        interaction,
+        "Can't kick this member, they might have a role higher than mine"
+      );
     }
   },
 } as Command;
