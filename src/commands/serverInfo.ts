@@ -1,15 +1,12 @@
 import { CommandInteraction, Message, EmbedBuilder } from "discord.js";
 import { Command } from "../interfaces/command.interface";
+import { sendMessage } from "../utilities/sendMessage";
 
 export default {
   name: "serverinfo",
   description: "Displays information about the server",
   async execute(interaction?: CommandInteraction, message?: Message) {
-    let guild;
-
-    if (interaction) guild = interaction.guild;
-    if (message) guild = message.guild;
-
+    const guild = interaction?.guild || message?.guild;
     if (!guild) return;
 
     const embed = new EmbedBuilder()
@@ -41,7 +38,6 @@ export default {
       )
       .setThumbnail(guild.iconURL() || null);
 
-    if (interaction) await interaction.reply({ embeds: [embed] });
-    if (message) await message.channel.send({ embeds: [embed] });
+    sendMessage(message, interaction, { embeds: [embed] });
   },
 } as Command;
