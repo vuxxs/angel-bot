@@ -1,6 +1,7 @@
 import { CommandInteraction, EmbedBuilder, Message } from "discord.js";
 import { Command } from "../interfaces/command.interface";
 import { CustomClient } from "../interfaces/client.interface";
+import { sendMessage } from "../utilities/sendMessage";
 
 export default {
   name: "help",
@@ -11,12 +12,10 @@ export default {
     args?: string[] // Use it in the future for command categories
   ) {
     // Retrieve all commands from the client
-    let client: CustomClient;
-    if (interaction) {
-      client = interaction?.client as CustomClient;
-    } else {
-      client = message?.client as CustomClient;
-    }
+    const client =
+      (interaction?.client as CustomClient) ||
+      (message?.client as CustomClient);
+    if (!client) return;
     const commands = client.commands;
 
     if (!commands) return;
@@ -36,10 +35,6 @@ export default {
     });
 
     // Reply with the embed
-    if (interaction) {
-      await interaction.reply({ embeds: [embed] });
-    } else if (message) {
-      await message.channel.send({ embeds: [embed] });
-    }
+    sendMessage(message, interaction, { embeds: [embed] });
   },
 } as Command;
