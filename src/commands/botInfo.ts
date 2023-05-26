@@ -1,15 +1,13 @@
 import { CommandInteraction, EmbedBuilder, Message } from "discord.js";
 import { Command } from "../interfaces/command.interface";
 import os from "os";
+import { sendMessage } from "../utilities/sendMessage";
 
 export default {
   name: "botinfo",
   description: "Displays information about the bot",
   async execute(interaction?: CommandInteraction, message?: Message) {
-    let client;
-
-    if (interaction) client = interaction.client;
-    if (message) client = message.client;
+    const client = interaction?.client || message?.client;
 
     if (!client) return;
 
@@ -38,7 +36,6 @@ export default {
       )
       .setThumbnail(client.user?.avatarURL() || null);
 
-    if (interaction) await interaction.reply({ embeds: [embed] });
-    if (message) await message.channel.send({ embeds: [embed] });
+    sendMessage(message, interaction, { embeds: [embed] });
   },
 } as Command;
