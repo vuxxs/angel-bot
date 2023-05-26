@@ -25,11 +25,12 @@ export default {
     args?: string[]
   ) {
     if (!args) args = [];
+    if (args.length === 0 && message) args.push(message.member!.user.id); // If it's a message but there's no user provided, push OP
+
     const user =
       interaction?.options.getUser("target") ||
       interaction?.user ||
-      message?.guild?.members.cache.get(filterUserId(args[0]))?.user ||
-      message?.author;
+      message?.guild?.members.cache.get(filterUserId(args[0]))?.user;
     if (!user) return;
     const member =
       interaction?.guild?.members.cache.get(user.id)! ||
