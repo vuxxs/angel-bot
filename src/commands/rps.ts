@@ -5,6 +5,7 @@ import {
 } from "discord.js";
 import { Command } from "../interfaces/command.interface";
 import { sendMessage } from "../utilities/sendMessage";
+import { LogLevel, angelogger } from "../utilities/logger";
 
 export default {
   name: "rps",
@@ -30,8 +31,13 @@ export default {
     const choices = ["rock", "paper", "scissors"];
     const botChoice = choices[Math.floor(Math.random() * choices.length)];
     const userChoice = interaction?.options.get("choice") || args?.[0];
+    const exists = choices.find((value: string) => userChoice === value);
 
-    if (!userChoice) {
+    if (
+      !userChoice ||
+      /* Don't check for exists if it's an interaction, exists is undefined */
+      (!exists && !interaction)
+    ) {
       sendMessage(
         message,
         interaction,
