@@ -5,7 +5,6 @@ import {
 } from "discord.js";
 import { Command } from "../interfaces/command.interface";
 import { sendMessage } from "../utilities/sendMessage";
-import { LogLevel, angelogger } from "../utilities/logger";
 
 export default {
   name: "rps",
