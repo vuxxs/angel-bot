@@ -70,12 +70,14 @@ export default {
       );
 
       await channel.bulkDelete(deletableMessages, true);
-      const reply =
-        (await interaction?.reply({
-          content: `${limit} messages deleted.`,
-          ephemeral: true,
-        })) || (await message?.channel.send(`${limit} messages deleted.`));
-      setTimeout(() => reply?.delete(), 5000); // delete the message after 5 seconds
+      setTimeout(async () => {
+        const reply =
+          (await interaction?.reply({
+            content: `${limit} messages deleted.`,
+            ephemeral: true,
+          })) || (await message?.channel.send(`${limit} messages deleted.`));
+        setTimeout(() => reply?.delete(), 5000); // delete the message after 5 seconds
+      }, 1000); /* Delay confirmation message to have enough time to delete everything and avoid crashes */
     } catch (error) {
       sendMessage(
         message,
