@@ -4,7 +4,7 @@ import { CustomClient } from "../interfaces/client.interface";
 import { ApplicationCommandType } from "discord.js";
 import { readDirArray } from "./readDirectory";
 import { join } from "path";
-import { angelogger, LogLevel } from "./logger";
+import { angelogger } from "./logger";
 
 export const registerSlashCommands = async (
   client: CustomClient,
@@ -23,18 +23,15 @@ export const registerSlashCommands = async (
   const rest = new REST({ version: "9" }).setToken(process.env.TOKEN!);
 
   try {
-    angelogger(LogLevel.INFO, "Started refreshing application (/) commands.");
+    angelogger.info("Started refreshing application (/) commands.");
 
     await rest.put(Routes.applicationCommands(clientId), {
       body: commands,
     });
 
-    angelogger(
-      LogLevel.INFO,
-      "Successfully reloaded application (/) commands."
-    );
+    angelogger.info("Successfully reloaded application (/) commands.");
   } catch (error) {
-    angelogger(LogLevel.ERROR, `${error}`);
+    angelogger.error(error);
   }
 };
 

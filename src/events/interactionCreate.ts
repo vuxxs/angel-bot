@@ -1,5 +1,5 @@
 import { CustomClient } from "../interfaces/client.interface";
-import { LogLevel, angelogger } from "../utilities/logger";
+import { angelogger } from "../utilities/logger";
 
 export default (client: CustomClient): void => {
   client.on("interactionCreate", async (interaction) => {
@@ -12,7 +12,7 @@ export default (client: CustomClient): void => {
     try {
       await command.execute(interaction);
     } catch (error) {
-      angelogger(LogLevel.ERROR, `${error}`);
+      angelogger.error(error);
       await interaction.reply({
         content: "There was an error while executing this command!",
         ephemeral: true,
