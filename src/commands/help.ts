@@ -6,6 +6,7 @@ import { sendMessage } from "../utilities/sendMessage";
 export default {
   name: "help",
   description: "Displays a list of all available commands",
+  category: "utility",
   async execute(
     interaction?: CommandInteraction,
     message?: Message,

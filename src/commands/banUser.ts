@@ -11,6 +11,7 @@ import { sendMessage } from "../utilities/sendMessage";
 export default {
   name: "banuser",
   description: "Ban a member from the server",
+  category: "moderation",
   permissions: ["BanMembers"],
   options: [
     {

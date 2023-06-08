@@ -6,6 +6,7 @@ import { sendMessage } from "../utilities/sendMessage";
 export default {
   name: "botinfo",
   description: "Displays information about the bot",
+  category: "utility",
   async execute(interaction?: CommandInteraction, message?: Message) {
     const client = interaction?.client || message?.client;
 

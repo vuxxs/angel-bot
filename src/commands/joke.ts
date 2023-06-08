@@ -14,6 +14,7 @@ const jokes = [
 export default {
   name: "joke",
   description: "Tells a random joke",
+  category: "fun",
   async execute(interaction?: CommandInteraction, message?: Message) {
     const joke = jokes[Math.floor(Math.random() * jokes.length)];
 
