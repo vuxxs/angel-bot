@@ -11,6 +11,7 @@ import { sendMessage, sendMessageWaitDelete } from "../utilities/sendMessage";
 export default {
   name: "purge",
   description: "Delete a certain number of messages in a channel",
+  category: "moderation",
   permissions: ["ManageMessages"],
   options: [
     {

@@ -8,6 +8,7 @@ import {
 export interface Command {
   name: string;
   description: string;
+  category: "utility" | "moderation" | "fun";
   options?: ApplicationCommandOptionData[];
   permissions?: PermissionResolvable[];
   execute: (

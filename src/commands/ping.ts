@@ -5,6 +5,7 @@ import { sendMessage } from "../utilities/sendMessage";
 export default {
   name: "ping",
   description: "Ping command",
+  category: "utility",
   execute: async (interaction?: CommandInteraction, message?: Message) => {
     sendMessage(message, interaction, "Pong!");
   },

@@ -11,6 +11,7 @@ export const afkStatuses: { [userId: string]: string } = {};
 export default {
   name: "afk",
   description: "Set your AFK status",
+  category: "utility",
   options: [
     {
       name: "reason",

@@ -5,6 +5,7 @@ import { sendMessage } from "../utilities/sendMessage";
 export default {
   name: "serverinfo",
   description: "Displays information about the server",
+  category: "utility",
   async execute(interaction?: CommandInteraction, message?: Message) {
     const guild = interaction?.guild || message?.guild;
     if (!guild) return;

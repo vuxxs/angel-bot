@@ -11,6 +11,7 @@ import { sendMessage } from "../utilities/sendMessage";
 export default {
   name: "userinfo",
   description: "Displays information about a user",
+  category: "utility",
   options: [
     {
       name: "target",

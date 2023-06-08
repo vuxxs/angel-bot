@@ -11,6 +11,7 @@ import { sendMessage } from "../utilities/sendMessage";
 export default {
   name: "kickuser",
   description: "Kick a member from the server",
+  category: "moderation",
   permissions: ["KickMembers"],
   options: [
     {

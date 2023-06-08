@@ -9,6 +9,7 @@ import { sendMessage } from "../utilities/sendMessage";
 export default {
   name: "rps",
   description: "Play a game of rock paper scissors with the bot",
+  category: "fun",
   options: [
     {
       name: "choice",

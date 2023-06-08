@@ -8,6 +8,7 @@ import { Command } from "../interfaces/command.interface";
 export default {
   name: "poll",
   description: "Starts a poll, users can vote by reacting to the message",
+  category: "utility",
   options: [
     {
       name: "question",
