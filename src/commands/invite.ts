@@ -1,3 +1,4 @@
+// Removing this from the final product is a violation of the code's usage
 import { CommandInteraction, Message } from "discord.js";
 import { Command } from "../interfaces/command.interface";
 import { sendMessage } from "../utilities/sendMessage";

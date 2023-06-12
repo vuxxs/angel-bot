@@ -2,7 +2,7 @@ import { CommandInteraction, Message } from "discord.js";
 import { Command } from "../interfaces/command.interface";
 import { sendMessage } from "../utilities/sendMessage";
 
-// Move & pull from database in the future
+// Pull from a database or add your own local file logic
 const jokes = [
   "Why don't scientists trust atoms? Because they make up everything!",
   "Why did the chicken go to the séance? To talk to the other side.",
