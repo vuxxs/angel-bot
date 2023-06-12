@@ -5,7 +5,7 @@ import {
 } from "discord.js";
 import { Command } from "../interfaces/command.interface";
 
-// Move this to database
+// Move this to your database
 export const afkStatuses: { [userId: string]: string } = {};
 
 export default {

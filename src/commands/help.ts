@@ -10,7 +10,7 @@ export default {
   async execute(
     interaction?: CommandInteraction,
     message?: Message,
-    args?: string[] // Use it in the future for command categories
+    args?: string[] // Use it for command categories
   ) {
     // Retrieve all commands from the client
     const client =
