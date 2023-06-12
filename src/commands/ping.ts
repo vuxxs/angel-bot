@@ -4,9 +4,13 @@ import { sendMessage } from "../utilities/sendMessage";
 
 export default {
   name: "ping",
-  description: "Ping command",
+  description: "Check the bot's response",
   category: "utility",
   execute: async (interaction?: CommandInteraction, message?: Message) => {
-    sendMessage(message, interaction, "Pong!");
+    sendMessage(
+      message,
+      interaction,
+      `Pong! (${interaction?.client.ws.ping || message?.client.ws.ping}ms)`
+    );
   },
 } as Command;
