@@ -3,13 +3,13 @@ import {
   CustomClient,
   CustomClientOptions,
 } from "./interfaces/client.interface";
-import { angelogger } from "./utilities/logger";
+import { drebinlogger } from "./utilities/logger";
 import { registerCommands } from "./utilities/registerCommands";
 import { readDirArray } from "./utilities/readDirectory";
 import { join } from "path";
 require("dotenv").config();
 
-angelogger.info("Bot is starting...");
+drebinlogger.info("Bot is starting...");
 
 const options: CustomClientOptions = {
   prefix: "$",
@@ -40,7 +40,7 @@ const client = new Client(options) as CustomClient;
 client.commands = registerCommands();
 
 if (client.commands.size === 0)
-  angelogger.warn("No client commands were defined.");
+  drebinlogger.warn("No client commands were defined.");
 
 // Run events
 const events = readDirArray(join(__dirname, "events"));
@@ -51,6 +51,6 @@ if (events) {
     event.default(client);
   });
 } else {
-  angelogger.error("No events were defined.");
+  drebinlogger.error("No events were defined.");
 }
 client.login(process.env.TOKEN);

@@ -4,7 +4,7 @@ import { CustomClient } from "../interfaces/client.interface";
 import { ApplicationCommandType } from "discord.js";
 import { readDirArray } from "./readDirectory";
 import { join } from "path";
-import { angelogger } from "./logger";
+import { drebinlogger } from "./logger";
 
 export const registerSlashCommands = async (
   client: CustomClient,
@@ -23,15 +23,15 @@ export const registerSlashCommands = async (
   const rest = new REST({ version: "9" }).setToken(process.env.TOKEN!);
 
   try {
-    angelogger.info("Started refreshing application (/) commands.");
+    drebinlogger.info("Started refreshing application (/) commands.");
 
     await rest.put(Routes.applicationCommands(clientId), {
       body: commands,
     });
 
-    angelogger.info("Successfully reloaded application (/) commands.");
+    drebinlogger.info("Successfully reloaded application (/) commands.");
   } catch (error) {
-    angelogger.error(error);
+    drebinlogger.error(error);
   }
 };
 

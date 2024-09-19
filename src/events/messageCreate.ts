@@ -1,7 +1,7 @@
 import { ChannelType } from "discord.js";
 import { afkStatuses } from "../commands/afk";
 import { CustomClient } from "../interfaces/client.interface";
-import { angelogger } from "../utilities/logger";
+import { drebinlogger } from "../utilities/logger";
 
 export default (client: CustomClient): void => {
   client.on("messageCreate", async (message) => {
@@ -41,7 +41,7 @@ export default (client: CustomClient): void => {
     try {
       await command.execute(undefined, message, args);
     } catch (err) {
-      angelogger.error(`Error executing command "${commandName}": ${err}`);
+      drebinlogger.error(`Error executing command "${commandName}": ${err}`);
       message.channel.send("An error occured while executing the command.");
     }
   });

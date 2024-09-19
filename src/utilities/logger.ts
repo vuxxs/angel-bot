@@ -21,4 +21,4 @@ class Logger {
   }
 }
 
-export { Logger as angelogger };
+export { Logger as drebinlogger };
