@@ -12,7 +12,7 @@ export default {
     message?: Message,
     args?: string[] // Use it for command categories
   ) {
-    // Retrieve all commands from the client
+    // We retrieve all commands from the client
     const client =
       (interaction?.client as CustomClient) ||
       (message?.client as CustomClient);
@@ -21,7 +21,7 @@ export default {
 
     if (!commands) return;
 
-    // Create an embed for a pretty display of commands
+    // We create an embed for a pretty display of commands
     const embed = new EmbedBuilder()
       .setColor("#0099ff")
       .setTitle("Bot Commands")
@@ -30,12 +30,11 @@ export default {
         text: `Use /<command> or ${client.options.prefix}<command> to execute a command`,
       });
 
-    // Add a field for each command with its description
+    // We add a field for each command with its description
     commands.forEach((command: Command) => {
       embed.addFields({ name: command.name, value: command.description });
     });
 
-    // Reply with the embed
     sendMessage(message, interaction, { embeds: [embed] });
   },
 } as Command;

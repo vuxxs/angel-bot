@@ -12,13 +12,13 @@ export default (client: CustomClient): void => {
     )
       return;
 
-    // If the author of the message is AFK, remove their AFK status
+    // If the author is AFK, remove their AFK status
     if (afkStatuses[message.author.id]) {
       delete afkStatuses[message.author.id];
       await message.reply("Welcome back, your AFK status has been removed.");
     }
 
-    // Check if the message mentions a user that is AFK
+    // We check if the message mentions a user that is AFK
     for (const [userId, reason] of Object.entries(afkStatuses)) {
       if (message.mentions.users.has(userId)) {
         await message.reply(`<@${userId}> is currently AFK. Reason: ${reason}`);

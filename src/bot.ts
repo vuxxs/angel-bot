@@ -36,13 +36,11 @@ const options: CustomClientOptions = {
 
 const client = new Client(options) as CustomClient;
 
-// Register commands
 client.commands = registerCommands();
 
 if (client.commands.size === 0)
   drebinlogger.warn("No client commands were defined.");
 
-// Run events
 const events = readDirArray(join(__dirname, "events"));
 
 if (events) {

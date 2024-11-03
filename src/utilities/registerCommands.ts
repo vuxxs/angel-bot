@@ -40,7 +40,6 @@ export const registerCommands = () => {
 
   const commandFiles = readDirArray(join(__dirname, "..", "commands"));
 
-  // Run even if the directory isn't found
   if (commandFiles) {
     for (const file of commandFiles) {
       const command = require(join(__dirname, "..", "commands", file));

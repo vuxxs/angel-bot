@@ -9,7 +9,7 @@ export interface AdditionalOptions extends ClientOptions {
 
 export interface CustomClientProperties extends Client {
   // Client properties
-  // Not required, careful that they might be undefined
+  // Not required. Be careful as they might be undefined
   commands: Map<string, Command>;
 }
 

@@ -5,7 +5,6 @@ import updateMembersCount from "../utilities/updateMembersCount";
 
 export default (client: CustomClient): void => {
   client.on("ready", async () => {
-    // Set the activity
     updateMembersCount(client);
 
     registerSlashCommands(client, client.user!.id);

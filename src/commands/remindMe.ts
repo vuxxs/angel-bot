@@ -45,14 +45,12 @@ export default {
       return;
     }
 
-    // Notify the user that the reminder has been set successfully
     await sendMessage(
       message,
       interaction,
       `Got it! I'll remind you in ${time / 60} minute(s).`
     );
 
-    // Set and then send the reminder
     setTimeout(async () => {
       const channel = message?.channel || interaction?.channel;
       const user = message?.author.id || interaction?.user.id;

@@ -66,13 +66,13 @@ export default {
       sendMessage(
         message,
         interaction,
-        `${targetUser.tag} has been baned for reason: ${reason}`
+        `${targetUser.tag} has been banned\nReason: \`\`\`${reason}\`\`\``
       );
     } catch (error) {
       sendMessage(
         message,
         interaction,
-        "Can't ban this member, they might have a role higher than mine"
+        "Can't ban this member, they might have a more powerful role than mine!"
       );
     }
   },

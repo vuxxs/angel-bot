@@ -26,8 +26,7 @@ export default {
     args?: string[]
   ) {
     if (!args) args = [];
-    if (args.length === 0 && message) args.push(message.member!.user.id); // If it's a message but there's no user provided, push OP
-
+    if (args.length === 0 && message) args.push(message.member!.user.id); // If it's a message but there's no user provided, push author
     const user =
       interaction?.options.getUser("target") ||
       interaction?.user ||

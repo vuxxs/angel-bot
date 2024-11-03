@@ -77,8 +77,8 @@ export default {
             content: `${limit} messages deleted.`,
             ephemeral: true,
           })) || (await message?.channel.send(`${limit} messages deleted.`));
-        setTimeout(() => reply?.delete(), 5000); // delete the message after 5 seconds
-      }, 1000); /* Delay confirmation message to have enough time to delete everything and avoid crashes */
+        setTimeout(() => reply?.delete(), 5000); // We delete the message after 5 seconds
+      }, 1000); // We delay confirmation message to have enough time to delete everything and avoid crashes
     } catch (error) {
       sendMessage(
         message,

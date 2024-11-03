@@ -2,7 +2,7 @@ import { ActivityType } from "discord.js";
 import { CustomClient } from "../interfaces/client.interface";
 
 export default function updateMembersCount(client: CustomClient) {
-  // Compute the total number of unique users the bot serves, excluding bots
+  // We compute the total number of unique users the bot serves and exclude bots
   const userSet = new Set();
   client.guilds.cache.forEach((guild) => {
     guild.members.cache.forEach((member) => {
@@ -11,7 +11,6 @@ export default function updateMembersCount(client: CustomClient) {
   });
   const userCount = userSet.size;
 
-  // Set client activity
   client.user?.setActivity({
     type: ActivityType.Watching,
     name: `${userCount} users | ${client.options.prefix}help`,
