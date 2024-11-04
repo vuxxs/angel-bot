@@ -1,12 +1,10 @@
-import {
-  ApplicationCommandOptionType,
-  CommandInteraction,
-  GuildMember,
-  Message,
-} from "discord.js";
+import { ApplicationCommandOptionType, GuildMember } from "discord.js";
 import { Command } from "../interfaces/command.interface";
-import { filterUserId } from "../utilities/filterUserId";
-import { sendMessage } from "../utilities/sendMessage";
+import {
+  getImpetusTarget,
+  replyToImpetus,
+  getImpetusOption,
+} from "../utilities/Impetus";
 
 export default {
   name: "kickuser",
@@ -27,51 +25,43 @@ export default {
       required: false,
     },
   ],
-  async execute(
-    interaction?: CommandInteraction,
-    message?: Message,
-    args?: string[]
-  ) {
+  async execute(impetus, args) {
     if (!args) args = [];
-    const member = interaction?.member || message?.member;
+    const member = impetus.member;
     if (!(member instanceof GuildMember)) return; // Interaction is in DM, return
-    if (!member?.permissions.has("KickMembers")) {
-      sendMessage(
-        message,
-        interaction,
+    if (!member.permissions.has("KickMembers")) {
+      replyToImpetus(
+        impetus,
         "You do not have the necessary permissions to use this command."
       );
       return;
     }
-    const targetUser =
-      interaction?.options.getUser("target") ||
-      message?.guild!.members.cache.get(filterUserId(args[0]))?.user;
-    const reason =
-      (interaction?.options.get("reason")?.value as string) ||
-      args[1] ||
-      "No reason provided";
+    const targetUser = getImpetusTarget(impetus, args);
+    const reason = getImpetusOption(impetus, args, "reason");
 
     if (!targetUser) return;
 
-    const targetMember = member.guild?.members.cache.get(targetUser.id);
+    const targetMember = member.guild.members.cache.get(targetUser.id);
 
     if (!targetMember) {
-      sendMessage(message, interaction, "User not found");
+      replyToImpetus(impetus, "User not found", undefined, true);
       return;
     }
 
     try {
       await member.kick(reason);
-      sendMessage(
-        message,
-        interaction,
-        `${targetUser.tag} has been kicked for reason: ${reason}`
+      replyToImpetus(
+        impetus,
+        `${targetUser.tag} has been kicked for reason: ${reason}`,
+        undefined,
+        true
       );
     } catch (error) {
-      sendMessage(
-        message,
-        interaction,
-        "Can't kick this member, they might have a role higher than mine"
+      replyToImpetus(
+        impetus,
+        "Can't kick this member, they might have a role higher than mine",
+        undefined,
+        true
       );
     }
   },

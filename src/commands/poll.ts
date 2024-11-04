@@ -4,6 +4,7 @@ import {
   Message,
 } from "discord.js";
 import { Command } from "../interfaces/command.interface";
+import { getImpetusOption, replyToImpetus } from "../utilities/Impetus";
 
 export default {
   name: "poll",
@@ -17,27 +18,22 @@ export default {
       required: true,
     },
   ],
-  async execute(
-    interaction?: CommandInteraction,
-    message?: Message,
-    args?: string[]
-  ) {
-    const question =
-      interaction?.options.get("question")?.value || args?.join(" ");
+  async execute(impetus, args = []) {
+    const question = getImpetusOption(impetus, args, "");
 
-    const pollMessage = await interaction?.reply({
-      content: `Poll: ${question}\n\n👍 Yes\n\n👎 No`,
-      fetchReply: true,
-    });
-    const pollMsg = await message?.channel.send(
-      `Poll: ${question}\n\n👍 Yes\n\n👎 No`
-    );
+    const pollMessage = (await replyToImpetus(
+      impetus,
+      {
+        content: `Poll: ${question}\n\n👍 Yes\n\n👎 No`,
+        fetchReply: true,
+      },
+      true,
+      true
+    )) as Message;
 
     try {
-      await pollMessage?.react("👍");
-      await pollMessage?.react("👎");
-      await pollMsg?.react("👍");
-      await pollMsg?.react("👎");
+      await pollMessage.react("👍");
+      await pollMessage.react("👎");
     } catch (error) {
       // Failed to react
     }

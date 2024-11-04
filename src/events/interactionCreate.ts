@@ -1,6 +1,7 @@
 import { CustomClient } from "../interfaces/client.interface";
 import { drebinlogger } from "../utilities/logger";
 
+// TODO Add AFK status checks here as well
 export default (client: CustomClient): void => {
   client.on("interactionCreate", async (interaction) => {
     if (!interaction.isCommand()) return;

@@ -1,12 +1,10 @@
-import {
-  ApplicationCommandOptionType,
-  CommandInteraction,
-  EmbedBuilder,
-  Message,
-} from "discord.js";
+import { ApplicationCommandOptionType, EmbedBuilder } from "discord.js";
 import { Command } from "../interfaces/command.interface";
-import { filterUserId } from "../utilities/filterUserId";
-import { sendMessage } from "../utilities/sendMessage";
+import {
+  getImpetusTarget,
+  getImpetusUser,
+  replyToImpetus,
+} from "../utilities/Impetus";
 
 export default {
   name: "userinfo",
@@ -20,21 +18,13 @@ export default {
       required: false,
     },
   ],
-  async execute(
-    interaction?: CommandInteraction,
-    message?: Message,
-    args?: string[]
-  ) {
-    if (!args) args = [];
-    if (args.length === 0 && message) args.push(message.member!.user.id); // If it's a message but there's no user provided, push author
-    const user =
-      interaction?.options.getUser("target") ||
-      interaction?.user ||
-      message?.guild?.members.cache.get(filterUserId(args[0]))?.user;
+  async execute(impetus, args = []) {
+    if (!impetus.guild) return;
+    const user = getImpetusTarget(impetus, args) || getImpetusUser(impetus);
+
     if (!user) return;
-    const member =
-      interaction?.guild?.members.cache.get(user.id)! ||
-      message?.guild?.members.cache.get(user.id);
+
+    const member = impetus.guild.members.cache.get(user.id);
 
     if (!member) return;
 
@@ -62,6 +52,6 @@ export default {
       )
       .setThumbnail(user.avatarURL() || null);
 
-    sendMessage(message, interaction, { embeds: [embed] });
+    replyToImpetus(impetus, { embeds: [embed] });
   },
 } as Command;

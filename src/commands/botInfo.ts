@@ -1,21 +1,21 @@
-import { CommandInteraction, EmbedBuilder, Message } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { Command } from "../interfaces/command.interface";
 import os from "os";
-import { sendMessage } from "../utilities/sendMessage";
+import { replyToImpetus } from "../utilities/Impetus";
 
 export default {
   name: "botinfo",
   description: "Displays information about the bot",
   category: "utility",
-  async execute(interaction?: CommandInteraction, message?: Message) {
-    const client = interaction?.client || message?.client;
+  async execute(impetus) {
+    const client = impetus.client;
 
     if (!client) return;
 
     const uptime = Math.floor(process.uptime());
 
     const embed = new EmbedBuilder()
-      .setTitle(`${client.user?.username}'s Information`)
+      .setTitle(`${client.user.username}'s Information`)
       .setColor("#0099ff")
       .addFields(
         { name: "Uptime", value: `${uptime} seconds`, inline: true },
@@ -35,8 +35,8 @@ export default {
         { name: "OS", value: `${os.type()} ${os.release()}`, inline: true },
         { name: "Library", value: "discord.js", inline: true }
       )
-      .setThumbnail(client.user?.avatarURL() || null);
+      .setThumbnail(client.user.avatarURL() || null);
 
-    sendMessage(message, interaction, { embeds: [embed] });
+    replyToImpetus(impetus, { embeds: [embed] });
   },
 } as Command;

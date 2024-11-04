@@ -1,5 +1,6 @@
 import { ActivityType } from "discord.js";
 import { CustomClient } from "../interfaces/client.interface";
+import { drebinlogger } from "./logger";
 
 export default function updateMembersCount(client: CustomClient) {
   // We compute the total number of unique users the bot serves and exclude bots
@@ -11,8 +12,14 @@ export default function updateMembersCount(client: CustomClient) {
   });
   const userCount = userSet.size;
 
-  client.user?.setActivity({
-    type: ActivityType.Watching,
-    name: `${userCount} users | ${client.options.prefix}help`,
-  });
+  if (client.user)
+    client.user.setActivity({
+      type: ActivityType.Watching,
+      name: `${userCount} users | ${client.options.prefix}help`,
+    });
+  else {
+    drebinlogger.warn(
+      "Could not initialize updateMembersCount, client.user doesn't exist."
+    );
+  }
 }

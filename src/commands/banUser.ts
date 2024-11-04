@@ -1,12 +1,12 @@
-import {
-  ApplicationCommandOptionType,
-  CommandInteraction,
-  GuildMember,
-  Message,
-} from "discord.js";
 import { Command } from "../interfaces/command.interface";
-import { filterUserId } from "../utilities/filterUserId";
-import { sendMessage } from "../utilities/sendMessage";
+
+import { ApplicationCommandOptionType, GuildMember } from "discord.js";
+
+import {
+  getImpetusOption,
+  getImpetusTarget,
+  replyToImpetus,
+} from "../utilities/Impetus";
 
 export default {
   name: "banuser",
@@ -27,52 +27,45 @@ export default {
       required: false,
     },
   ],
-  async execute(
-    interaction?: CommandInteraction,
-    message?: Message,
-    args?: string[]
-  ) {
-    if (!args) args = [];
-    const member = interaction?.member || message?.member;
+  async execute(impetus, args = []) {
+    const member = impetus.member;
+
     if (!(member instanceof GuildMember)) return; // Interaction is in DM, return
-    if (!member?.permissions.has("BanMembers")) {
-      sendMessage(
-        message,
-        interaction,
+
+    if (!member.permissions.has("BanMembers")) {
+      replyToImpetus(
+        impetus,
         "You do not have the necessary permissions to use this command."
       );
       return;
     }
-    const targetUser =
-      interaction?.options.getUser("target") ||
-      message?.guild?.members.cache.get(filterUserId(args[0]))?.user;
+    const targetUser = getImpetusTarget(impetus, args);
 
     if (!targetUser) return;
 
-    const reason =
-      (interaction?.options.get("reason")?.value as string) ||
-      args[1] ||
-      "No reason provided";
+    const reason = getImpetusOption(impetus, args, "reason");
 
-    const targetMember = member.guild?.members.cache.get(targetUser.id);
+    const targetMember = member.guild.members.cache.get(targetUser.id);
 
     if (!targetMember) {
-      sendMessage(message, interaction, "User not found");
+      replyToImpetus(impetus, "User not found", undefined, true);
       return;
     }
 
     try {
       await member.ban({ reason });
-      sendMessage(
-        message,
-        interaction,
-        `${targetUser.tag} has been banned\nReason: \`\`\`${reason}\`\`\``
+      replyToImpetus(
+        impetus,
+        `${targetUser.tag} has been banned\nReason: \`\`\`${reason}\`\`\``,
+        undefined,
+        true
       );
     } catch (error) {
-      sendMessage(
-        message,
-        interaction,
-        "Can't ban this member, they might have a more powerful role than mine!"
+      replyToImpetus(
+        impetus,
+        "Can't ban this member, they might have a more powerful role than mine!",
+        undefined,
+        true
       );
     }
   },

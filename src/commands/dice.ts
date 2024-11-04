@@ -1,13 +1,12 @@
-import { CommandInteraction, Message } from "discord.js";
 import { Command } from "../interfaces/command.interface";
-import { sendMessage } from "../utilities/sendMessage";
+import { replyToImpetus } from "../utilities/Impetus";
 
 export default {
   name: "dice",
   description: "Roll a virtual dice",
   category: "fun",
-  async execute(interaction?: CommandInteraction, message?: Message) {
+  async execute(impetus) {
     const result = Math.floor(Math.random() * 6) + 1;
-    sendMessage(message, interaction, `You rolled ${result}.`);
+    replyToImpetus(impetus, `You rolled ${result}.`);
   },
 } as Command;

@@ -4,7 +4,11 @@ import {
   Message,
 } from "discord.js";
 import { Command } from "../interfaces/command.interface";
-import { sendMessage } from "../utilities/sendMessage";
+import {
+  getImpetusId,
+  getImpetusOption,
+  replyToImpetus,
+} from "../utilities/Impetus";
 
 export default {
   name: "remindme",
@@ -24,37 +28,39 @@ export default {
       required: true,
     },
   ],
-  async execute(
-    interaction?: CommandInteraction,
-    message?: Message,
-    args?: string[]
-  ) {
-    const time =
-      (interaction?.options.get("time")!.value as number) * 60 ||
-      parseInt(args![0]) * 60;
-    const reminder =
-      (interaction?.options.get("message")!.value as string) ||
-      args?.slice(1).join(" ");
+  async execute(impetus, args = ["1"]) {
+    const timeOption = Number(getImpetusOption(impetus, args, "time"));
+
+    let time;
+    if (timeOption) {
+      time = timeOption * 60;
+    } else {
+      time = parseInt(args[0]) * 60;
+    }
+
+    const reminder = getImpetusOption(impetus, args, "message");
 
     if (!time || !reminder) {
-      sendMessage(
-        message,
-        interaction,
-        "You must specify both a time (in minutes) and a reminder message"
+      replyToImpetus(
+        impetus,
+        "You must specify both a time (in minutes) and a reminder message",
+        undefined,
+        true
       );
       return;
     }
 
-    await sendMessage(
-      message,
-      interaction,
-      `Got it! I'll remind you in ${time / 60} minute(s).`
+    await replyToImpetus(
+      impetus,
+      `Got it! I'll remind you in ${time / 60} minute(s).`,
+      undefined,
+      true
     );
 
     setTimeout(async () => {
-      const channel = message?.channel || interaction?.channel;
-      const user = message?.author.id || interaction?.user.id;
-      channel!.send(`**Reminder!** "${reminder}" <@!${user}>`);
+      const channel = impetus.channel;
+      const user = getImpetusId(impetus);
+      if (channel) channel.send(`**Reminder!** "${reminder}" <@!${user}>`);
     }, time * 1000);
   },
 } as Command;

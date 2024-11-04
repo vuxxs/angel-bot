@@ -1,8 +1,7 @@
-import { CommandInteraction, Message } from "discord.js";
 import { Command } from "../interfaces/command.interface";
-import { sendMessage } from "../utilities/sendMessage";
+import { replyToImpetus } from "../utilities/Impetus";
 
-// TODO Pull from a database or add your own local file logic
+// TODO Pull from database
 const jokes = [
   "Why don't scientists trust atoms? Because they make up everything!",
   "Why did the chicken go to the séance? To talk to the other side.",
@@ -15,9 +14,9 @@ export default {
   name: "joke",
   description: "Tells a random joke",
   category: "fun",
-  async execute(interaction?: CommandInteraction, message?: Message) {
+  async execute(impetus) {
     const joke = jokes[Math.floor(Math.random() * jokes.length)];
 
-    sendMessage(message, interaction, joke);
+    replyToImpetus(impetus, joke);
   },
 } as Command;

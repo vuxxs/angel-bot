@@ -1,14 +1,14 @@
-import { CommandInteraction, GuildMember, Message } from "discord.js";
+import { GuildMember } from "discord.js";
 import { Command } from "../interfaces/command.interface";
-import { sendMessage } from "../utilities/sendMessage";
+import { replyToImpetus } from "../utilities/Impetus";
 
 export default {
   name: "invite",
   description: "Create an invite to the current channel.",
   category: "utility",
-  execute: async (interaction?: CommandInteraction, message?: Message) => {
-    const member = interaction?.member || message?.member;
+  execute: async (impetus) => {
+    const member = impetus.member;
     if (!(member instanceof GuildMember)) return;
-    /* FIXME */ sendMessage(message, interaction, "Not available yet");
+    /* FIXME */ replyToImpetus(impetus, "Not available yet");
   },
 } as Command;
