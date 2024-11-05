@@ -1,11 +1,12 @@
-import {
-  ApplicationCommandOptionType,
-  CommandInteraction,
-  Message,
-} from "discord.js";
+import { ApplicationCommandOptionType } from "discord.js";
 import { Command } from "../interfaces/command.interface";
 
-// TODO Move this to database
+import {
+  getImpetusId,
+  getImpetusOption,
+  replyToImpetus,
+} from "../utilities/Impetus";
+
 export const afkStatuses: { [userId: string]: string } = {};
 
 export default {
@@ -20,23 +21,14 @@ export default {
       required: false,
     },
   ],
-  async execute(
-    interaction?: CommandInteraction,
-    message?: Message,
-    args?: string[]
-  ) {
-    const reason =
-      (interaction?.options.get("reason")?.value as string) ||
-      args?.join(" ") ||
-      "No reason given";
-
-    const userId = interaction?.user.id || message?.author.id;
+  async execute(impetus, args = []) {
+    const userId = getImpetusId(impetus);
     if (!userId) return;
 
-    afkStatuses[userId] = reason;
+    const reason = getImpetusOption(impetus, args, "reason", true);
 
-    await interaction?.reply(`You are now AFK: ${reason}`);
-    const reply = await message?.reply(`You are now AFK: ${reason}`);
-    setTimeout(() => reply?.delete(), 5000);
+    afkStatuses[userId] = reason!;
+
+    replyToImpetus(impetus, `You are now AFK: ${reason}`, undefined, true);
   },
 } as Command;

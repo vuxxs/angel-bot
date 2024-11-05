@@ -1,16 +1,11 @@
-import { CommandInteraction, Message } from "discord.js";
 import { Command } from "../interfaces/command.interface";
-import { sendMessage } from "../utilities/sendMessage";
+import { replyToImpetus } from "../utilities/Impetus";
 
 export default {
   name: "ping",
   description: "Check the bot's response",
   category: "utility",
-  execute: async (interaction?: CommandInteraction, message?: Message) => {
-    sendMessage(
-      message,
-      interaction,
-      `Pong! (${interaction?.client.ws.ping || message?.client.ws.ping}ms)`
-    );
+  execute: async (impetus) => {
+    replyToImpetus(impetus, `Pong! (${impetus.client.ws.ping}ms)`);
   },
 } as Command;

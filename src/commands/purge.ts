@@ -6,7 +6,7 @@ import {
   Message,
 } from "discord.js";
 import { Command } from "../interfaces/command.interface";
-import { sendMessage, sendMessageWaitDelete } from "../utilities/sendMessage";
+import { getImpetusOption, replyToImpetus } from "../utilities/Impetus";
 
 export default {
   name: "purge",
@@ -21,42 +21,44 @@ export default {
       required: true,
     },
   ],
-  async execute(
-    interaction?: CommandInteraction,
-    message?: Message,
-    args?: string[]
-  ) {
+  async execute(impetus, args = []) {
     if (!args) args = [];
-    const member = interaction?.member || message?.member;
+    const member = impetus.member;
     if (!(member instanceof GuildMember)) return; // Interaction is in DM, return
     if (!member.permissions.has("ManageMessages")) {
-      sendMessage(
-        message,
-        interaction,
-        "You do not have the necessary permissions to use this command."
+      replyToImpetus(
+        impetus,
+        "You do not have the necessary permissions to use this command.",
+        undefined,
+        true
       );
       return;
     }
 
-    const amount =
-      (interaction?.options.get("amount")!.value as number) ||
-      parseInt(args[0]);
+    const amount = Number(getImpetusOption(impetus, args, "amount"));
 
     if (!amount) {
-      sendMessage(message, interaction, {
-        content: "Invalid number of messages to delete.",
-      });
+      replyToImpetus(
+        impetus,
+        {
+          content: "Invalid number of messages to delete.",
+        },
+        undefined,
+        true
+      );
 
       return;
     }
 
-    const channel = interaction?.channel || message?.channel;
+    const channel = impetus.channel;
     if (!channel) return;
+
     if (channel.type === ChannelType.DM) {
-      sendMessage(
-        message,
-        interaction,
-        "Command can only be used in text channels."
+      replyToImpetus(
+        impetus,
+        "Command can only be used in text channels.",
+        undefined,
+        true
       );
 
       return;
@@ -72,18 +74,22 @@ export default {
 
       await channel.bulkDelete(deletableMessages, true);
       setTimeout(async () => {
-        const reply =
-          (await interaction?.reply({
+        replyToImpetus(
+          impetus,
+          {
             content: `${limit} messages deleted.`,
             ephemeral: true,
-          })) || (await message?.channel.send(`${limit} messages deleted.`));
-        setTimeout(() => reply?.delete(), 5000); // We delete the message after 5 seconds
+          },
+          undefined,
+          true
+        );
       }, 1000); // We delay confirmation message to have enough time to delete everything and avoid crashes
     } catch (error) {
-      sendMessage(
-        message,
-        interaction,
-        "An error occurred while trying to delete messages"
+      replyToImpetus(
+        impetus,
+        "An error occurred while trying to delete messages",
+        undefined,
+        true
       );
     }
   },

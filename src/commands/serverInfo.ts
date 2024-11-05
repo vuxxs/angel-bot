@@ -1,13 +1,13 @@
-import { CommandInteraction, Message, EmbedBuilder } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { Command } from "../interfaces/command.interface";
-import { sendMessage } from "../utilities/sendMessage";
+import { replyToImpetus } from "../utilities/Impetus";
 
 export default {
   name: "serverinfo",
   description: "Displays information about the server",
   category: "utility",
-  async execute(interaction?: CommandInteraction, message?: Message) {
-    const guild = interaction?.guild || message?.guild;
+  async execute(impetus) {
+    const guild = impetus.guild;
     if (!guild) return;
 
     const embed = new EmbedBuilder()
@@ -39,6 +39,6 @@ export default {
       )
       .setThumbnail(guild.iconURL() || null);
 
-    sendMessage(message, interaction, { embeds: [embed] });
+    replyToImpetus(impetus, { embeds: [embed] });
   },
 } as Command;

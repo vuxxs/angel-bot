@@ -1,10 +1,6 @@
-import {
-  ApplicationCommandOptionType,
-  CommandInteraction,
-  Message,
-} from "discord.js";
+import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
 import { Command } from "../interfaces/command.interface";
-import { sendMessage } from "../utilities/sendMessage";
+import { getImpetusOption, replyToImpetus } from "../utilities/Impetus";
 
 export default {
   name: "rps",
@@ -23,24 +19,19 @@ export default {
       ],
     },
   ],
-  async execute(
-    interaction?: CommandInteraction,
-    message?: Message,
-    args?: string[]
-  ) {
+  async execute(impetus, args = []) {
     const choices = ["rock", "paper", "scissors"];
     const botChoice = choices[Math.floor(Math.random() * choices.length)];
-    const userChoice = interaction?.options.get("choice") || args?.[0];
+    const userChoice = getImpetusOption(impetus, args, "choice");
     const exists = choices.find((value: string) => userChoice === value);
 
     if (
       !userChoice ||
       /* Don't check for exists if it's an interaction, exists is undefined */
-      (!exists && !interaction)
+      (!exists && !(impetus instanceof CommandInteraction))
     ) {
-      sendMessage(
-        message,
-        interaction,
+      replyToImpetus(
+        impetus,
         "You didn't choose a value! Use either rock, paper or scissors."
       );
       return;
@@ -59,6 +50,6 @@ export default {
       result = `**You win!** I chose ${botChoice}`;
     }
 
-    sendMessage(message, interaction, result);
+    replyToImpetus(impetus, result);
   },
 } as Command;

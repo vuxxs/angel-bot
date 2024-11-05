@@ -32,14 +32,15 @@ export default (client: CustomClient): void => {
       .trim()
       .split(/ +/);
 
-    const commandName = args.shift()?.toLowerCase();
+    const firstArg = args.shift();
+    const commandName = firstArg ? firstArg.toLowerCase() : undefined;
 
     const command = client.commands.get(commandName!);
 
     if (!command) return;
 
     try {
-      await command.execute(undefined, message, args);
+      await command.execute(message, args);
     } catch (err) {
       drebinlogger.error(`Error executing command "${commandName}": ${err}`);
       message.channel.send("An error occured while executing the command.");

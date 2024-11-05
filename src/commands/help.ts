@@ -1,21 +1,19 @@
 import { CommandInteraction, EmbedBuilder, Message } from "discord.js";
 import { Command } from "../interfaces/command.interface";
 import { CustomClient } from "../interfaces/client.interface";
-import { sendMessage } from "../utilities/sendMessage";
+import { replyToImpetus } from "../utilities/Impetus";
 
 export default {
   name: "help",
   description: "Displays a list of all available commands",
   category: "utility",
   async execute(
-    interaction?: CommandInteraction,
-    message?: Message,
-    args?: string[] // Use it for command categories
+    impetus,
+    args = [] // Use it for command categories
   ) {
     // We retrieve all commands from the client
-    const client =
-      (interaction?.client as CustomClient) ||
-      (message?.client as CustomClient);
+    const client = impetus.client as CustomClient;
+
     if (!client) return;
     const commands = client.commands;
 
@@ -35,6 +33,6 @@ export default {
       embed.addFields({ name: command.name, value: command.description });
     });
 
-    sendMessage(message, interaction, { embeds: [embed] });
+    replyToImpetus(impetus, { embeds: [embed] });
   },
 } as Command;
