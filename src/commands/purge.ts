@@ -2,12 +2,16 @@ import {
   ApplicationCommandOptionType,
   ChannelType,
   ChatInputCommandInteraction,
-  GuildMember,
   Message,
   MessageFlags,
   TextChannel,
 } from "discord.js";
 import { Command } from "../interfaces/command.interface.ts";
+import {
+  getIntegerInput,
+  getInvokingMember,
+  normalizeArgs,
+} from "../utilities/commandContext.ts";
 import { sendMessage } from "../utilities/sendMessage.ts";
 
 export default {
@@ -28,9 +32,10 @@ export default {
     message?: Message,
     args?: string[],
   ) {
-    if (!args) args = [];
-    const member = interaction?.member || message?.member;
-    if (!(member instanceof GuildMember)) return; // Interaction is in DM, return
+    const parsedArgs = normalizeArgs(args);
+    const member = getInvokingMember(interaction, message);
+    if (!member) return;
+
     if (!member.permissions.has("ManageMessages")) {
       sendMessage(
         message,
@@ -40,8 +45,7 @@ export default {
       return;
     }
 
-    const amount =
-      interaction?.options.getInteger("amount") || parseInt(args[0]);
+    const amount = getIntegerInput(interaction, parsedArgs, "amount", 0);
 
     if (!amount) {
       sendMessage(message, interaction, {

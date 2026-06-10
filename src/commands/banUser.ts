@@ -1,11 +1,15 @@
 import {
   ApplicationCommandOptionType,
   ChatInputCommandInteraction,
-  GuildMember,
   Message,
 } from "discord.js";
 import { Command } from "../interfaces/command.interface.ts";
-import { filterUserId } from "../utilities/filterUserId.ts";
+import {
+  getInvokingMember,
+  getStringInput,
+  getTargetUser,
+  normalizeArgs,
+} from "../utilities/commandContext.ts";
 import { sendMessage } from "../utilities/sendMessage.ts";
 
 export default {
@@ -32,10 +36,11 @@ export default {
     message?: Message,
     args?: string[],
   ) {
-    if (!args) args = [];
-    const member = interaction?.member || message?.member;
-    if (!(member instanceof GuildMember)) return; // Interaction is in DM, return
-    if (!member?.permissions.has("BanMembers")) {
+    const parsedArgs = normalizeArgs(args);
+    const member = getInvokingMember(interaction, message);
+    if (!member) return;
+
+    if (!member.permissions.has("BanMembers")) {
       sendMessage(
         message,
         interaction,
@@ -43,15 +48,13 @@ export default {
       );
       return;
     }
-    const targetUser =
-      interaction?.options.getUser("target") ||
-      message?.guild?.members.cache.get(filterUserId(args[0]))?.user;
+
+    const targetUser = getTargetUser(interaction, message, parsedArgs);
 
     if (!targetUser) return;
 
     const reason =
-      interaction?.options.getString("reason") ||
-      args[1] ||
+      getStringInput(interaction, parsedArgs, "reason", 1) ||
       "No reason provided";
 
     const targetMember = member.guild?.members.cache.get(targetUser.id);
@@ -62,11 +65,11 @@ export default {
     }
 
     try {
-      await member.ban({ reason });
+      await targetMember.ban({ reason });
       sendMessage(
         message,
         interaction,
-        `${targetUser.tag} has been baned for reason: ${reason}`,
+        `${targetUser.tag} has been banned for reason: ${reason}`,
       );
     } catch (_error) {
       sendMessage(

@@ -4,6 +4,10 @@ import {
   Message,
 } from "discord.js";
 import { Command } from "../interfaces/command.interface.ts";
+import {
+  getStringInputFromRest,
+  normalizeArgs,
+} from "../utilities/commandContext.ts";
 
 export default {
   name: "poll",
@@ -22,8 +26,13 @@ export default {
     message?: Message,
     args?: string[],
   ) {
-    const question =
-      interaction?.options.getString("question") || args?.join(" ");
+    const parsedArgs = normalizeArgs(args);
+    const question = getStringInputFromRest(
+      interaction,
+      parsedArgs,
+      "question",
+      0,
+    );
 
     const messageChannel = message?.channel;
     const canSendToMessageChannel =

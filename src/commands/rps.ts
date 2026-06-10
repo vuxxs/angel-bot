@@ -4,6 +4,7 @@ import {
   Message,
 } from "discord.js";
 import { Command } from "../interfaces/command.interface.ts";
+import { getStringInput } from "../utilities/commandContext.ts";
 import { sendMessage } from "../utilities/sendMessage.ts";
 
 export default {
@@ -30,7 +31,7 @@ export default {
   ) {
     const choices = ["rock", "paper", "scissors"];
     const botChoice = choices[Math.floor(Math.random() * choices.length)];
-    const userChoice = interaction?.options.getString("choice") || args?.[0];
+    const userChoice = getStringInput(interaction, args, "choice", 0);
     const exists = choices.find((value: string) => userChoice === value);
 
     if (

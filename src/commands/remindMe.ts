@@ -4,6 +4,11 @@ import {
   Message,
 } from "discord.js";
 import { Command } from "../interfaces/command.interface.ts";
+import {
+  getIntegerInput,
+  getStringInputFromRest,
+  normalizeArgs,
+} from "../utilities/commandContext.ts";
 import { sendMessage } from "../utilities/sendMessage.ts";
 
 export default {
@@ -29,11 +34,15 @@ export default {
     message?: Message,
     args?: string[],
   ) {
-    const time =
-      (interaction?.options.getInteger("time") ||
-        parseInt(args?.[0] ?? "", 10)) * 60;
-    const reminder =
-      interaction?.options.getString("message") || args?.slice(1).join(" ");
+    const parsedArgs = normalizeArgs(args);
+    const minutes = getIntegerInput(interaction, parsedArgs, "time", 0);
+    const time = minutes ? minutes * 60 : 0;
+    const reminder = getStringInputFromRest(
+      interaction,
+      parsedArgs,
+      "message",
+      1,
+    );
 
     if (!time || !reminder) {
       sendMessage(
