@@ -2,7 +2,6 @@ import { ChatInputCommandInteraction, Message } from "discord.js";
 import { Command } from "../interfaces/command.interface.ts";
 import { sendMessage } from "../utilities/sendMessage.ts";
 
-// Pull from a database or add your own local file logic
 const jokes = [
   "Why don't scientists trust atoms? Because they make up everything!",
   "Why did the chicken go to the séance? To talk to the other side.",

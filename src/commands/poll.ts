@@ -52,7 +52,7 @@ export default {
       await pollMsg?.react("👍");
       await pollMsg?.react("👎");
     } catch (_error) {
-      // Failed to react
+      // Fail silently
     }
   },
 } as Command;

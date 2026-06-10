@@ -93,8 +93,8 @@ export default {
                   flags: MessageFlags.Ephemeral,
                 }))
           : await textChannel.send(`${limit} messages deleted.`);
-        setTimeout(() => reply?.delete(), 5000); // delete the message after 5 seconds
-      }, 1000); /* Delay confirmation message to have enough time to delete everything and avoid crashes */
+        setTimeout(() => reply?.delete(), 5000);
+      }, 1000); // Delay confirmation message to have enough time to delete everything and avoid crashes
     } catch (_error) {
       sendMessage(
         message,

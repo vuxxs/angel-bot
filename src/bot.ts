@@ -36,14 +36,12 @@ const options: CustomClientOptions = {
 const client = new Client(options) as CustomClient;
 
 async function startBot() {
-  // Register commands
   client.commands = await registerCommands();
 
   if (client.commands.size === 0) {
     drebinLogger.warn("No client commands were defined.");
   }
 
-  // Run events
   const events = readDirArray(new URL("./events/", import.meta.url));
 
   if (events.length > 0) {
