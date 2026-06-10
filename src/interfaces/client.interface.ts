@@ -1,5 +1,5 @@
 import { Client, ClientOptions } from "discord.js";
-import { Command } from "./command.interface";
+import { Command } from "./command.interface.ts";
 
 export interface AdditionalOptions extends ClientOptions {
   // Client options properties

@@ -1,10 +1,13 @@
-import * as fs from "fs";
-import { angelogger } from "./logger";
+import { drebinLogger } from "./logger.ts";
 
-export function readDirArray(path: fs.PathLike) {
+export function readDirArray(path: string | URL): string[] {
   try {
-    return fs.readdirSync(path).filter((file) => file.endsWith(".ts"));
+    return Array.from(Deno.readDirSync(path))
+      .filter((entry) => entry.isFile && entry.name.endsWith(".ts"))
+      .map((entry) => entry.name)
+      .sort();
   } catch (e) {
-    angelogger.error(`Couldn't read a directory: ${path}`);
+    drebinLogger.error(`Couldn't read a directory: ${String(path)} (${e})`);
+    return [];
   }
 }

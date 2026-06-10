@@ -1,5 +1,5 @@
 import {
-  CommandInteraction,
+  ChatInputCommandInteraction,
   EmbedBuilder,
   Message,
   MessagePayload,
@@ -13,21 +13,33 @@ export type dualContentsType =
 
 export async function sendMessage(
   message: Message | undefined,
-  interaction: CommandInteraction | undefined,
-  content: dualContentsType
+  interaction: ChatInputCommandInteraction | undefined,
+  content: dualContentsType,
 ) {
-  return (
-    (await message?.channel.send(content)) ||
-    (await interaction?.reply(content))
-  );
+  const channel = message?.channel as
+    | { send?: (payload: dualContentsType) => Promise<unknown> }
+    | undefined;
+
+  if (channel?.send) {
+    return await channel.send(content);
+  }
+
+  if (interaction) {
+    return await interaction.reply(content);
+  }
+
+  return undefined;
 }
 
 export async function sendMessageWaitDelete(
   message: Message | undefined,
-  interaction: CommandInteraction | undefined,
+  interaction: ChatInputCommandInteraction | undefined,
   content: dualContentsType,
-  time: number
+  time: number,
 ) {
   const reply = await sendMessage(message, interaction, content);
-  setTimeout(() => reply!.delete(), time);
+  setTimeout(() => {
+    const deletableReply = reply as { delete?: () => Promise<unknown> };
+    void deletableReply.delete?.();
+  }, time);
 }

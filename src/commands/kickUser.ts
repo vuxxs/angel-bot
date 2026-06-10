@@ -1,12 +1,12 @@
 import {
   ApplicationCommandOptionType,
-  CommandInteraction,
+  ChatInputCommandInteraction,
   GuildMember,
   Message,
 } from "discord.js";
-import { Command } from "../interfaces/command.interface";
-import { filterUserId } from "../utilities/filterUserId";
-import { sendMessage } from "../utilities/sendMessage";
+import { Command } from "../interfaces/command.interface.ts";
+import { filterUserId } from "../utilities/filterUserId.ts";
+import { sendMessage } from "../utilities/sendMessage.ts";
 
 export default {
   name: "kickuser",
@@ -28,9 +28,9 @@ export default {
     },
   ],
   async execute(
-    interaction?: CommandInteraction,
+    interaction?: ChatInputCommandInteraction,
     message?: Message,
-    args?: string[]
+    args?: string[],
   ) {
     if (!args) args = [];
     const member = interaction?.member || message?.member;
@@ -39,15 +39,15 @@ export default {
       sendMessage(
         message,
         interaction,
-        "You do not have the necessary permissions to use this command."
+        "You do not have the necessary permissions to use this command.",
       );
       return;
     }
     const targetUser =
       interaction?.options.getUser("target") ||
-      message?.guild!.members.cache.get(filterUserId(args[0]))?.user;
+      message?.guild?.members.cache.get(filterUserId(args[0]))?.user;
     const reason =
-      (interaction?.options.get("reason")?.value as string) ||
+      interaction?.options.getString("reason") ||
       args[1] ||
       "No reason provided";
 
@@ -65,13 +65,13 @@ export default {
       sendMessage(
         message,
         interaction,
-        `${targetUser.tag} has been kicked for reason: ${reason}`
+        `${targetUser.tag} has been kicked for reason: ${reason}`,
       );
-    } catch (error) {
+    } catch (_error) {
       sendMessage(
         message,
         interaction,
-        "Can't kick this member, they might have a role higher than mine"
+        "Can't kick this member, they might have a role higher than mine",
       );
     }
   },

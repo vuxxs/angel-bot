@@ -1,12 +1,12 @@
-import { CommandInteraction, Message } from "discord.js";
-import { Command } from "../interfaces/command.interface";
-import { sendMessage } from "../utilities/sendMessage";
+import { ChatInputCommandInteraction, Message } from "discord.js";
+import { Command } from "../interfaces/command.interface.ts";
+import { sendMessage } from "../utilities/sendMessage.ts";
 
 export default {
   name: "dice",
   description: "Roll a virtual dice",
   category: "fun",
-  async execute(interaction?: CommandInteraction, message?: Message) {
+  execute(interaction?: ChatInputCommandInteraction, message?: Message) {
     const result = Math.floor(Math.random() * 6) + 1;
     sendMessage(message, interaction, `You rolled ${result}.`);
   },

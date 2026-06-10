@@ -1,12 +1,14 @@
 import {
   ApplicationCommandOptionType,
   ChannelType,
-  CommandInteraction,
+  ChatInputCommandInteraction,
   GuildMember,
   Message,
+  MessageFlags,
+  TextChannel,
 } from "discord.js";
-import { Command } from "../interfaces/command.interface";
-import { sendMessage, sendMessageWaitDelete } from "../utilities/sendMessage";
+import { Command } from "../interfaces/command.interface.ts";
+import { sendMessage } from "../utilities/sendMessage.ts";
 
 export default {
   name: "purge",
@@ -22,9 +24,9 @@ export default {
     },
   ],
   async execute(
-    interaction?: CommandInteraction,
+    interaction?: ChatInputCommandInteraction,
     message?: Message,
-    args?: string[]
+    args?: string[],
   ) {
     if (!args) args = [];
     const member = interaction?.member || message?.member;
@@ -33,14 +35,13 @@ export default {
       sendMessage(
         message,
         interaction,
-        "You do not have the necessary permissions to use this command."
+        "You do not have the necessary permissions to use this command.",
       );
       return;
     }
 
     const amount =
-      (interaction?.options.get("amount")!.value as number) ||
-      parseInt(args[0]);
+      interaction?.options.getInteger("amount") || parseInt(args[0]);
 
     if (!amount) {
       sendMessage(message, interaction, {
@@ -52,38 +53,49 @@ export default {
 
     const channel = interaction?.channel || message?.channel;
     if (!channel) return;
-    if (channel.type === ChannelType.DM) {
+    if (
+      channel.type === ChannelType.DM ||
+      channel.type !== ChannelType.GuildText
+    ) {
       sendMessage(
         message,
         interaction,
-        "Command can only be used in text channels."
+        "Command can only be used in text channels.",
       );
 
       return;
     }
+
+    const textChannel = channel as TextChannel;
     try {
       const limit = Math.min(amount, 100); // limit to 100, max amount allowed for bulkDelete
-      const fetchedMessages = channel.messages.fetch({ limit });
+      const fetchedMessages = textChannel.messages.fetch({ limit });
 
       const deletableMessages = (await fetchedMessages).filter(
         (message) =>
-          Date.now() - message.createdTimestamp < 14 * 24 * 60 * 60 * 1000
+          Date.now() - message.createdTimestamp < 14 * 24 * 60 * 60 * 1000,
       );
 
-      await channel.bulkDelete(deletableMessages, true);
+      await textChannel.bulkDelete(deletableMessages, true);
       setTimeout(async () => {
-        const reply =
-          (await interaction?.reply({
-            content: `${limit} messages deleted.`,
-            ephemeral: true,
-          })) || (await message?.channel.send(`${limit} messages deleted.`));
+        const reply = interaction
+          ? await (interaction.deferred || interaction.replied
+              ? interaction.followUp({
+                  content: `${limit} messages deleted.`,
+                  flags: MessageFlags.Ephemeral,
+                })
+              : interaction.reply({
+                  content: `${limit} messages deleted.`,
+                  flags: MessageFlags.Ephemeral,
+                }))
+          : await textChannel.send(`${limit} messages deleted.`);
         setTimeout(() => reply?.delete(), 5000); // delete the message after 5 seconds
       }, 1000); /* Delay confirmation message to have enough time to delete everything and avoid crashes */
-    } catch (error) {
+    } catch (_error) {
       sendMessage(
         message,
         interaction,
-        "An error occurred while trying to delete messages"
+        "An error occurred while trying to delete messages",
       );
     }
   },

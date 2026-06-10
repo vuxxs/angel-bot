@@ -1,15 +1,15 @@
 import { REST } from "@discordjs/rest";
-import { Routes } from "discord-api-types/v9";
-import { CustomClient } from "../interfaces/client.interface";
+import { Routes } from "discord-api-types/v10";
+import { CustomClient } from "../interfaces/client.interface.ts";
 import { ApplicationCommandType } from "discord.js";
-import { readDirArray } from "./readDirectory";
-import { join } from "path";
-import { angelogger } from "./logger";
+import { readDirArray } from "./readDirectory.ts";
+import { drebinLogger } from "./logger.ts";
+import { Command } from "../interfaces/command.interface.ts";
 
 export const registerSlashCommands = async (
   client: CustomClient,
   clientId: string,
-  guildId?: string
+  _guildId?: string,
 ) => {
   const commands = Array.from(client.commands.values()).map((command) => {
     return {
@@ -20,32 +20,40 @@ export const registerSlashCommands = async (
     };
   });
 
-  const rest = new REST({ version: "9" }).setToken(process.env.TOKEN!);
+  const token = Deno.env.get("TOKEN");
+  if (!token) {
+    drebinLogger.error("Missing TOKEN environment variable.");
+    return;
+  }
+
+  const rest = new REST({ version: "10" }).setToken(token);
 
   try {
-    angelogger.info("Started refreshing application (/) commands.");
+    drebinLogger.info("Started refreshing application (/) commands.");
 
     await rest.put(Routes.applicationCommands(clientId), {
       body: commands,
     });
 
-    angelogger.info("Successfully reloaded application (/) commands.");
+    drebinLogger.info("Successfully reloaded application (/) commands.");
   } catch (error) {
-    angelogger.error(error);
+    drebinLogger.error(error);
   }
 };
 
-export const registerCommands = () => {
-  const commands = new Map();
+export const registerCommands = async (): Promise<Map<string, Command>> => {
+  const commands = new Map<string, Command>();
 
-  const commandFiles = readDirArray(join(__dirname, "..", "commands"));
+  const commandFiles = readDirArray(new URL("../commands/", import.meta.url));
 
   // Run even if the directory isn't found
-  if (commandFiles) {
-    for (const file of commandFiles) {
-      const command = require(join(__dirname, "..", "commands", file));
-      commands.set(command.default.name, command.default);
-    }
+  for (const file of commandFiles) {
+    const commandModule = await import(
+      new URL(`../commands/${file}`, import.meta.url).href
+    );
+    const command = commandModule.default as Command;
+    commands.set(command.name, command);
   }
+
   return commands;
 };

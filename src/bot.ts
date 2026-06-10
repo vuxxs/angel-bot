@@ -1,15 +1,14 @@
 import { Client } from "discord.js";
+import "@std/dotenv/load";
 import {
   CustomClient,
   CustomClientOptions,
-} from "./interfaces/client.interface";
-import { angelogger } from "./utilities/logger";
-import { registerCommands } from "./utilities/registerCommands";
-import { readDirArray } from "./utilities/readDirectory";
-import { join } from "path";
-require("dotenv").config();
+} from "./interfaces/client.interface.ts";
+import { drebinLogger } from "./utilities/logger.ts";
+import { registerCommands } from "./utilities/registerCommands.ts";
+import { readDirArray } from "./utilities/readDirectory.ts";
 
-angelogger.info("Bot is starting...");
+drebinLogger.info("Bot is starting...");
 
 const options: CustomClientOptions = {
   prefix: "$",
@@ -36,21 +35,37 @@ const options: CustomClientOptions = {
 
 const client = new Client(options) as CustomClient;
 
-// Register commands
-client.commands = registerCommands();
+async function startBot() {
+  // Register commands
+  client.commands = await registerCommands();
 
-if (client.commands.size === 0)
-  angelogger.warn("No client commands were defined.");
+  if (client.commands.size === 0) {
+    drebinLogger.warn("No client commands were defined.");
+  }
 
-// Run events
-const events = readDirArray(join(__dirname, "events"));
+  // Run events
+  const events = readDirArray(new URL("./events/", import.meta.url));
 
-if (events) {
-  events.forEach((file) => {
-    const event = require(join(__dirname, "events", file));
-    event.default(client);
-  });
-} else {
-  angelogger.error("No events were defined.");
+  if (events.length > 0) {
+    await Promise.all(
+      events.map(async (file) => {
+        const event = await import(
+          new URL(`./events/${file}`, import.meta.url).href
+        );
+        event.default(client);
+      }),
+    );
+  } else {
+    drebinLogger.error("No events were defined.");
+  }
+
+  const token = Deno.env.get("TOKEN");
+  if (!token) {
+    drebinLogger.error("Missing TOKEN environment variable.");
+    return;
+  }
+
+  client.login(token);
 }
-client.login(process.env.TOKEN);
+
+await startBot();

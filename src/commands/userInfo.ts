@@ -1,12 +1,12 @@
 import {
   ApplicationCommandOptionType,
-  CommandInteraction,
+  ChatInputCommandInteraction,
   EmbedBuilder,
   Message,
 } from "discord.js";
-import { Command } from "../interfaces/command.interface";
-import { filterUserId } from "../utilities/filterUserId";
-import { sendMessage } from "../utilities/sendMessage";
+import { Command } from "../interfaces/command.interface.ts";
+import { filterUserId } from "../utilities/filterUserId.ts";
+import { sendMessage } from "../utilities/sendMessage.ts";
 
 export default {
   name: "userinfo",
@@ -20,16 +20,16 @@ export default {
       required: false,
     },
   ],
-  async execute(
-    interaction?: CommandInteraction,
+  execute(
+    interaction?: ChatInputCommandInteraction,
     message?: Message,
-    args?: string[]
+    args?: string[],
   ) {
     if (!args) args = [];
     if (args.length === 0 && message) args.push(message.member!.user.id); // If it's a message but there's no user provided, push OP
 
     const user =
-      interaction?.options.getUser("target") ||
+      interaction?.options.getUser("target", false) ||
       interaction?.user ||
       message?.guild?.members.cache.get(filterUserId(args[0]))?.user;
     if (!user) return;
@@ -59,7 +59,7 @@ export default {
           name: "Roles",
           value: member!.roles.cache.map((role) => role.name).join(", "),
           inline: true,
-        }
+        },
       )
       .setThumbnail(user.avatarURL() || null);
 

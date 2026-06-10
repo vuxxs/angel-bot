@@ -1,9 +1,10 @@
-import { CustomClient } from "../interfaces/client.interface";
-import { angelogger } from "../utilities/logger";
+import { CustomClient } from "../interfaces/client.interface.ts";
+import { drebinLogger } from "../utilities/logger.ts";
+import { MessageFlags } from "discord.js";
 
 export default (client: CustomClient): void => {
   client.on("interactionCreate", async (interaction) => {
-    if (!interaction.isCommand()) return;
+    if (!interaction.isChatInputCommand()) return;
 
     const command = client.commands.get(interaction.commandName);
 
@@ -12,11 +13,17 @@ export default (client: CustomClient): void => {
     try {
       await command.execute(interaction);
     } catch (error) {
-      angelogger.error(error);
-      await interaction.reply({
+      drebinLogger.error(error);
+      const errorPayload = {
         content: "There was an error while executing this command!",
-        ephemeral: true,
-      });
+        flags: MessageFlags.Ephemeral,
+      } as const;
+
+      if (interaction.deferred || interaction.replied) {
+        await interaction.followUp(errorPayload);
+      } else {
+        await interaction.reply(errorPayload);
+      }
     }
   });
 };

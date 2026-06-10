@@ -1,10 +1,10 @@
 import {
   ApplicationCommandOptionType,
-  CommandInteraction,
+  ChatInputCommandInteraction,
   Message,
 } from "discord.js";
-import { Command } from "../interfaces/command.interface";
-import { sendMessage } from "../utilities/sendMessage";
+import { Command } from "../interfaces/command.interface.ts";
+import { sendMessage } from "../utilities/sendMessage.ts";
 
 export default {
   name: "remindme",
@@ -25,22 +25,21 @@ export default {
     },
   ],
   async execute(
-    interaction?: CommandInteraction,
+    interaction?: ChatInputCommandInteraction,
     message?: Message,
-    args?: string[]
+    args?: string[],
   ) {
     const time =
-      (interaction?.options.get("time")!.value as number) * 60 ||
-      parseInt(args![0]) * 60;
+      (interaction?.options.getInteger("time") ||
+        parseInt(args?.[0] ?? "", 10)) * 60;
     const reminder =
-      (interaction?.options.get("message")!.value as string) ||
-      args?.slice(1).join(" ");
+      interaction?.options.getString("message") || args?.slice(1).join(" ");
 
     if (!time || !reminder) {
       sendMessage(
         message,
         interaction,
-        "You must specify both a time (in minutes) and a reminder message"
+        "You must specify both a time (in minutes) and a reminder message",
       );
       return;
     }
@@ -49,14 +48,19 @@ export default {
     await sendMessage(
       message,
       interaction,
-      `Got it! I'll remind you in ${time / 60} minute(s).`
+      `Got it! I'll remind you in ${time / 60} minute(s).`,
     );
 
     // Set and then send the reminder
-    setTimeout(async () => {
+    setTimeout(() => {
       const channel = message?.channel || interaction?.channel;
       const user = message?.author.id || interaction?.user.id;
-      channel!.send(`**Reminder!** "${reminder}" <@!${user}>`);
+
+      if (!channel || !channel.isTextBased() || !("send" in channel) || !user) {
+        return;
+      }
+
+      void channel.send(`**Reminder!** "${reminder}" <@!${user}>`);
     }, time * 1000);
   },
 } as Command;

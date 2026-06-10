@@ -1,10 +1,10 @@
-import { CustomClient } from "../interfaces/client.interface";
-import { angelogger } from "../utilities/logger";
-import { registerSlashCommands } from "../utilities/registerCommands";
-import updateMembersCount from "../utilities/updateMembersCount";
+import { CustomClient } from "../interfaces/client.interface.ts";
+import { drebinLogger } from "../utilities/logger.ts";
+import { registerSlashCommands } from "../utilities/registerCommands.ts";
+import updateMembersCount from "../utilities/updateMembersCount.ts";
 
 export default (client: CustomClient): void => {
-  client.on("ready", async () => {
+  client.on("ready", () => {
     // Set the activity
     updateMembersCount(client);
 
@@ -12,6 +12,6 @@ export default (client: CustomClient): void => {
     registerSlashCommands(client, client.user!.id);
 
     // Log that the bot is online
-    angelogger.info(`${client.user!.username} is online.`);
+    drebinLogger.info(`${client.user!.username} is online.`);
   });
 };

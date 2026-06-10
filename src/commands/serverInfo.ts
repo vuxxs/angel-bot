@@ -1,12 +1,12 @@
-import { CommandInteraction, Message, EmbedBuilder } from "discord.js";
-import { Command } from "../interfaces/command.interface";
-import { sendMessage } from "../utilities/sendMessage";
+import { ChatInputCommandInteraction, EmbedBuilder, Message } from "discord.js";
+import { Command } from "../interfaces/command.interface.ts";
+import { sendMessage } from "../utilities/sendMessage.ts";
 
 export default {
   name: "serverinfo",
   description: "Displays information about the server",
   category: "utility",
-  async execute(interaction?: CommandInteraction, message?: Message) {
+  execute(interaction?: ChatInputCommandInteraction, message?: Message) {
     const guild = interaction?.guild || message?.guild;
     if (!guild) return;
 
@@ -35,7 +35,7 @@ export default {
           name: "Roles Count",
           value: guild.roles.cache.size.toString(),
           inline: true,
-        }
+        },
       )
       .setThumbnail(guild.iconURL() || null);
 

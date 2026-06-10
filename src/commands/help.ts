@@ -1,16 +1,16 @@
-import { CommandInteraction, EmbedBuilder, Message } from "discord.js";
-import { Command } from "../interfaces/command.interface";
-import { CustomClient } from "../interfaces/client.interface";
-import { sendMessage } from "../utilities/sendMessage";
+import { ChatInputCommandInteraction, EmbedBuilder, Message } from "discord.js";
+import { Command } from "../interfaces/command.interface.ts";
+import { CustomClient } from "../interfaces/client.interface.ts";
+import { sendMessage } from "../utilities/sendMessage.ts";
 
 export default {
   name: "help",
   description: "Displays a list of all available commands",
   category: "utility",
-  async execute(
-    interaction?: CommandInteraction,
+  execute(
+    interaction?: ChatInputCommandInteraction,
     message?: Message,
-    args?: string[] // Use it for command categories
+    _args?: string[], // Use it for command categories
   ) {
     // Retrieve all commands from the client
     const client =

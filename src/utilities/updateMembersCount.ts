@@ -1,5 +1,5 @@
 import { ActivityType } from "discord.js";
-import { CustomClient } from "../interfaces/client.interface";
+import { CustomClient } from "../interfaces/client.interface.ts";
 
 export default function updateMembersCount(client: CustomClient) {
   // Compute the total number of unique users the bot serves, excluding bots
