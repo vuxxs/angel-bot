@@ -1,9 +1,13 @@
 import {
   ApplicationCommandOptionType,
-  CommandInteraction,
+  ChatInputCommandInteraction,
   Message,
 } from "discord.js";
-import { Command } from "../interfaces/command.interface";
+import { Command } from "../interfaces/command.interface.ts";
+import {
+  getStringInputFromRest,
+  normalizeArgs,
+} from "../utilities/commandContext.ts";
 
 export default {
   name: "poll",
@@ -18,28 +22,37 @@ export default {
     },
   ],
   async execute(
-    interaction?: CommandInteraction,
+    interaction?: ChatInputCommandInteraction,
     message?: Message,
-    args?: string[]
+    args?: string[],
   ) {
-    const question =
-      interaction?.options.get("question")?.value || args?.join(" ");
+    const parsedArgs = normalizeArgs(args);
+    const question = getStringInputFromRest(
+      interaction,
+      parsedArgs,
+      "question",
+      0,
+    );
+
+    const messageChannel = message?.channel;
+    const canSendToMessageChannel =
+      messageChannel?.isTextBased() && "send" in messageChannel;
 
     const pollMessage = await interaction?.reply({
       content: `Poll: ${question}\n\n👍 Yes\n\n👎 No`,
       fetchReply: true,
     });
-    const pollMsg = await message?.channel.send(
-      `Poll: ${question}\n\n👍 Yes\n\n👎 No`
-    );
+    const pollMsg = canSendToMessageChannel
+      ? await messageChannel.send(`Poll: ${question}\n\n👍 Yes\n\n👎 No`)
+      : undefined;
 
     try {
       await pollMessage?.react("👍");
       await pollMessage?.react("👎");
       await pollMsg?.react("👍");
       await pollMsg?.react("👎");
-    } catch (error) {
-      // Failed to react
+    } catch (_error) {
+      // Fail silently
     }
   },
 } as Command;

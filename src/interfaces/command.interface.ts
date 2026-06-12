@@ -1,6 +1,6 @@
 import {
   ApplicationCommandOptionData,
-  CommandInteraction,
+  ChatInputCommandInteraction,
   Message,
   PermissionResolvable,
 } from "discord.js";
@@ -12,8 +12,8 @@ export interface Command {
   options?: ApplicationCommandOptionData[];
   permissions?: PermissionResolvable[];
   execute: (
-    interaction?: CommandInteraction,
+    interaction?: ChatInputCommandInteraction,
     message?: Message,
-    args?: string[]
-  ) => Promise<void>;
+    args?: string[],
+  ) => Promise<void> | void;
 }

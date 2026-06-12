@@ -1,12 +1,16 @@
 import {
   ApplicationCommandOptionType,
-  CommandInteraction,
-  GuildMember,
+  ChatInputCommandInteraction,
   Message,
 } from "discord.js";
-import { Command } from "../interfaces/command.interface";
-import { filterUserId } from "../utilities/filterUserId";
-import { sendMessage } from "../utilities/sendMessage";
+import { Command } from "../interfaces/command.interface.ts";
+import {
+  getInvokingMember,
+  getStringInput,
+  getTargetUser,
+  normalizeArgs,
+} from "../utilities/commandContext.ts";
+import { sendMessage } from "../utilities/sendMessage.ts";
 
 export default {
   name: "kickuser",
@@ -28,27 +32,26 @@ export default {
     },
   ],
   async execute(
-    interaction?: CommandInteraction,
+    interaction?: ChatInputCommandInteraction,
     message?: Message,
-    args?: string[]
+    args?: string[],
   ) {
-    if (!args) args = [];
-    const member = interaction?.member || message?.member;
-    if (!(member instanceof GuildMember)) return; // Interaction is in DM, return
-    if (!member?.permissions.has("KickMembers")) {
+    const parsedArgs = normalizeArgs(args);
+    const member = getInvokingMember(interaction, message);
+    if (!member) return;
+
+    if (!member.permissions.has("KickMembers")) {
       sendMessage(
         message,
         interaction,
-        "You do not have the necessary permissions to use this command."
+        "You do not have the necessary permissions to use this command.",
       );
       return;
     }
-    const targetUser =
-      interaction?.options.getUser("target") ||
-      message?.guild!.members.cache.get(filterUserId(args[0]))?.user;
+
+    const targetUser = getTargetUser(interaction, message, parsedArgs);
     const reason =
-      (interaction?.options.get("reason")?.value as string) ||
-      args[1] ||
+      getStringInput(interaction, parsedArgs, "reason", 1) ||
       "No reason provided";
 
     if (!targetUser) return;
@@ -61,17 +64,17 @@ export default {
     }
 
     try {
-      await member.kick(reason);
+      await targetMember.kick(reason);
       sendMessage(
         message,
         interaction,
-        `${targetUser.tag} has been kicked for reason: ${reason}`
+        `${targetUser.tag} has been kicked for reason: ${reason}`,
       );
-    } catch (error) {
+    } catch (_error) {
       sendMessage(
         message,
         interaction,
-        "Can't kick this member, they might have a role higher than mine"
+        "Can't kick this member, they might have a role higher than mine",
       );
     }
   },

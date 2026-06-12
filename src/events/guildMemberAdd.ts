@@ -1,8 +1,8 @@
-import { CustomClient } from "../interfaces/client.interface";
-import updateMembersCount from "../utilities/updateMembersCount";
+import { CustomClient } from "../interfaces/client.interface.ts";
+import updateMembersCount from "../utilities/updateMembersCount.ts";
 
 export default (client: CustomClient): void => {
-  client.on("guildMemberAdd", async (member) => {
+  client.on("guildMemberAdd", () => {
     updateMembersCount(client);
   });
 };

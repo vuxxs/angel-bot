@@ -1,11 +1,10 @@
 import {
   ApplicationCommandOptionType,
-  CommandInteraction,
+  ChatInputCommandInteraction,
   Message,
 } from "discord.js";
-import { Command } from "../interfaces/command.interface";
+import { Command } from "../interfaces/command.interface.ts";
 
-// Move this to your database
 export const afkStatuses: { [userId: string]: string } = {};
 
 export default {
@@ -21,12 +20,12 @@ export default {
     },
   ],
   async execute(
-    interaction?: CommandInteraction,
+    interaction?: ChatInputCommandInteraction,
     message?: Message,
-    args?: string[]
+    args?: string[],
   ) {
     const reason =
-      (interaction?.options.get("reason")?.value as string) ||
+      interaction?.options.getString("reason") ||
       args?.join(" ") ||
       "No reason given";
 

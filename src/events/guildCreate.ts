@@ -1,13 +1,13 @@
-import { CustomClient } from "../interfaces/client.interface";
-import { angelogger } from "../utilities/logger";
-import updateMembersCount from "../utilities/updateMembersCount";
+import { CustomClient } from "../interfaces/client.interface.ts";
+import { drebinLogger } from "../utilities/logger.ts";
+import updateMembersCount from "../utilities/updateMembersCount.ts";
 
 export default (client: CustomClient): void => {
-  client.on("guildCreate", async (guild) => {
-    angelogger.info(`Joined Guild: ${guild.name} ID: ${guild.id}`);
+  client.on("guildCreate", (guild) => {
+    drebinLogger.info(`Joined Guild: ${guild.name} ID: ${guild.id}`);
 
-    angelogger.info(
-      `Joined new guild: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members.`
+    drebinLogger.info(
+      `Joined new guild: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members.`,
     );
 
     updateMembersCount(client);

@@ -1,10 +1,11 @@
 import {
   ApplicationCommandOptionType,
-  CommandInteraction,
+  ChatInputCommandInteraction,
   Message,
 } from "discord.js";
-import { Command } from "../interfaces/command.interface";
-import { sendMessage } from "../utilities/sendMessage";
+import { Command } from "../interfaces/command.interface.ts";
+import { getStringInput } from "../utilities/commandContext.ts";
+import { sendMessage } from "../utilities/sendMessage.ts";
 
 export default {
   name: "rps",
@@ -23,14 +24,14 @@ export default {
       ],
     },
   ],
-  async execute(
-    interaction?: CommandInteraction,
+  execute(
+    interaction?: ChatInputCommandInteraction,
     message?: Message,
-    args?: string[]
+    args?: string[],
   ) {
     const choices = ["rock", "paper", "scissors"];
     const botChoice = choices[Math.floor(Math.random() * choices.length)];
-    const userChoice = interaction?.options.get("choice") || args?.[0];
+    const userChoice = getStringInput(interaction, args, "choice", 0);
     const exists = choices.find((value: string) => userChoice === value);
 
     if (
@@ -41,7 +42,7 @@ export default {
       sendMessage(
         message,
         interaction,
-        "You didn't choose a value! Use either rock, paper or scissors."
+        "You didn't choose a value! Use either rock, paper or scissors.",
       );
       return;
     }

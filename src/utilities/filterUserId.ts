@@ -1,3 +1,3 @@
-export function filterUserId(userId: String) {
+export function filterUserId(userId: string) {
   return userId.replace(/[<@!>]/g, "");
 }

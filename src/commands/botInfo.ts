@@ -1,18 +1,20 @@
-import { CommandInteraction, EmbedBuilder, Message } from "discord.js";
-import { Command } from "../interfaces/command.interface";
-import os from "os";
-import { sendMessage } from "../utilities/sendMessage";
+import { ChatInputCommandInteraction, EmbedBuilder, Message } from "discord.js";
+import { Command } from "../interfaces/command.interface.ts";
+import os from "node:os";
+import { sendMessage } from "../utilities/sendMessage.ts";
 
 export default {
   name: "botinfo",
   description: "Displays information about the bot",
   category: "utility",
-  async execute(interaction?: CommandInteraction, message?: Message) {
+  execute(interaction?: ChatInputCommandInteraction, message?: Message) {
     const client = interaction?.client || message?.client;
 
     if (!client) return;
 
-    const uptime = Math.floor(process.uptime());
+    const uptime = Math.floor(performance.now() / 1000);
+    const ramUsageMb =
+      Math.round((Deno.memoryUsage().heapUsed / 1024 / 1024) * 100) / 100;
 
     const embed = new EmbedBuilder()
       .setTitle(`${client.user?.username}'s Information`)
@@ -26,14 +28,11 @@ export default {
         },
         {
           name: "RAM Usage",
-          value: `${
-            Math.round((process.memoryUsage().heapUsed / 1024 / 1024) * 100) /
-            100
-          } MB`,
+          value: `${ramUsageMb} MB`,
           inline: true,
         },
         { name: "OS", value: `${os.type()} ${os.release()}`, inline: true },
-        { name: "Library", value: "discord.js", inline: true }
+        { name: "Library", value: "discord.js", inline: true },
       )
       .setThumbnail(client.user?.avatarURL() || null);
 
