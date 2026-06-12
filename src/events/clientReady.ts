@@ -4,7 +4,7 @@ import { registerSlashCommands } from "../utilities/registerCommands.ts";
 import updateMembersCount from "../utilities/updateMembersCount.ts";
 
 export default (client: CustomClient): void => {
-  client.on("ready", () => {
+  client.on("clientReady", () => {
     updateMembersCount(client);
     registerSlashCommands(client, client.user!.id);
 
